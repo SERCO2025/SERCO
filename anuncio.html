@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anuncio</title>
+    <style>
+        /* CSS Integrado */
+        body, html {
+            /* Esto es lo más sincho. Quitamos márgenes y ponemos fondo transparente. */
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; 
+            background-color: transparent !important;
+        }
+
+        #contenedor-anuncio {
+            /* Se queda sinchado en la esquina superior izquierda. */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        #anuncio-imagen {
+            /* Estilos para la imagen */
+            display: block;
+            width: auto; /* Por si la quieres ajustar, homie */
+            height: auto; 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="contenedor-anuncio">
+        <a href="https://serco.neocities.org/pg3" target="_top">
+            <img src="anuncio.png" alt="Anuncio Importante" id="anuncio-imagen">
+        </a>
+    </div>
+
+</body>
+</html>
+

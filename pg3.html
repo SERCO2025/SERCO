@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serco | Construcción y Urbanización de Alta Precisión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Definición de variables de color para ambos modos */
+        :root {
+            --color-light-bg: #f8fafc; /* Slate-50 */
+            --color-light-text: #1e293b; /* Slate-800 */
+            --color-dark-bg: #0f172a; /* Slate-900 */
+            --color-dark-text: #f1f5f9; /* Slate-100 */
+            --color-primary: #009bff; /* Azul Serco */
+            --color-accent: #34d399; /* Verde Serco */
+        }
+        
+        /* Estilos base para el modo oscuro (por defecto) */
+        .dark {
+            background-color: var(--color-dark-bg);
+            color: var(--color-dark-text);
+        }
+        .dark .bg-main { background-color: var(--color-dark-bg); }
+        .dark .bg-card { background-color: #1e293b; } /* Slate-800 */
+        .dark .text-card-text { color: var(--color-dark-text); }
+        .dark .text-primary { color: var(--color-primary); }
+        .dark .text-accent { color: var(--color-accent); }
+        .dark .border-card { border-color: #334155; } /* Slate-600 */
+        .dark input, .dark textarea { background-color: #1e293b; color: var(--color-dark-text); border-color: #334155; }
+        
+        /* Estilos para el modo claro */
+        .light {
+            background-color: var(--color-light-bg);
+            color: var(--color-light-text);
+        }
+        .light .bg-main { background-color: var(--color-light-bg); }
+        .light .bg-card { background-color: #ffffff; }
+        .light .text-card-text { color: var(--color-light-text); }
+        .light .text-primary { color: var(--color-primary); }
+        .light .text-accent { color: var(--color-accent); }
+        .light .border-card { border-color: #cbd5e1; } /* Slate-300 */
+        .light input, .light textarea { background-color: #ffffff; color: var(--color-light-text); border-color: #cbd5e1; }
+        .light .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+
+        /* Estilos comunes */
+        html { scroll-behavior: smooth; }
+        .text-shadow { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); }
+        
+        /* Estilos para el carrusel */
+        .gallery-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .gallery-image.active {
+            opacity: 1;
+        }
+        #gallery-container {
+            height: 400px; /* Altura fija para el carrusel */
+            position: relative;
+        }
+
+        /* Estilos para el logo de imagen en la navbar */
+        .logo-img {
+            height: 40px; /* Ajusta el tamaño según sea necesario */
+            width: auto;
+        }
+
+        /* Estilos para el logo de imagen en la sección Hero */
+        .hero-logo-img {
+            width: 60vw; /* El 60% del ancho del viewport */
+            max-width: 600px; /* O un valor máximo para pantallas muy grandes */
+            height: auto;
+            margin-bottom: 2rem; /* Espacio debajo del logo */
+        }
+        
+        /* CLASE CUSTOM PARA EL EFECTO DE LUZ/BRILLO EN EL BOTÓN */
+        .btn-accent {
+            background-color: var(--color-accent); /* Color base */
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.6); /* Sombra inicial (brillo sutil) */
+        }
+        .btn-accent:hover {
+            filter: brightness(1.25); /* Hace el color del botón más claro (efecto de luz) */
+            box-shadow: 0 0 25px rgba(52, 211, 153, 0.9); /* Sombra más intensa (brillo fuerte) */
+        }
+
+        /* CLASE CUSTOM PARA EL BOTÓN DE CONTACTO (btn-submit) */
+        .btn-submit {
+            background-color: var(--color-primary); /* Base color */
+            color: white; /* Base text color */
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+        }
+        
+        /* Hover para Modo Oscuro (.dark) */
+        .dark .btn-submit:hover {
+            background-color: white;
+            color: black;
+        }
+
+        /* Hover para Modo Claro (.light) */
+        .light .btn-submit:hover {
+            background-color: black;
+            color: white;
+        }
+
+        
+        /* ESTILOS AÑADIDOS PARA EVITAR LA SELECCIÓN DE TEXTO Y PROTEGER CONTENIDO */
+        img {
+            pointer-events: none; /* Evita que las imágenes se arrastren/guarden */
+        }
+        /* Para permitir la selección en inputs/textareas si es necesario */
+        input, textarea {
+            user-select: auto;
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+        }
+        
+        /* ESTILO PARA EL CONTENEDOR DEL CONTADOR */
+        .contador-container {
+            --contador-height: 3rem; /* Variable para la altura del contador */
+            height: var(--contador-height); 
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative; 
+            z-index: 20; 
+            width: 100%; /* Asegura el ancho completo */
+        }
+
+        /* Ajuste para que el contador quede bien centrado y visible */
+        .contador-estilo {
+            text-align: center;
+            padding: 0.5rem 1rem;
+            color: white; 
+            font-size: 0.75rem; 
+        }
+        
+        /* CLASE PARA ASEGURAR QUE EL TÍTULO DEL SERVICIO SEA EL OBJETIVO DEL SCROLL */
+        .service-title-target {
+            scroll-margin-top: 5rem; /* Asegura que el título no quede oculto bajo la navbar */
+        }
+        
+        /* ESTILO PARA LA SECCIÓN HERO (AJUSTE DE ALTURA) */
+        #inicio {
+             /* 100vh - 4rem (navbar) - 3rem (contador) */
+            height: calc(100vh - 7rem); /* Altura ajustada dinámicamente */
+            max-height: 100vh; /* Para que no se exceda si 100vh es pequeño */
+        }
+        
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Habilita el modo oscuro basado en la clase 'dark' en el <html>
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'serco-indigo': '#4f46e5',
+                        'serco-accent': '#34d399',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-main font-sans transition-colors duration-500" onselectstart="return false">
+
+    <header class="sticky top-0 z-50 bg-card bg-opacity-95 shadow-lg border-b border-card transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+            <a href="#inicio" class="flex items-center">
+                <img src="./logo.png" alt="Logo Serco" class="logo-img"> 
+            </a>
+            
+            <nav class="hidden md:flex space-x-8 items-center">
+                <a href="#servicios" class="text-card-text hover:text-primary transition duration-300 font-medium">Servicios</a>
+                <a href="#proyectos" class="text-card-text hover:text-primary transition duration-300 font-medium">Proyectos</a>
+                <a href="#cobertura" class="text-card-text hover:text-primary transition duration-300 font-medium">Cobertura</a>
+                <a href="#contacto" class="text-card-text hover:text-primary transition duration-300 font-medium">Contacto</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300">
+                    <i class="fas fa-moon text-xl"></i>
+                </button>
+                <button id="menu-button" class="md:hidden text-card-text focus:outline-none p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-card border-t border-card">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
+                <a href="#servicios" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Servicios</a>
+                <a href="#proyectos" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Proyectos</a>
+                <a href="#cobertura" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Cobertura</a>
+                <a href="#contacto" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Contacto</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="inicio" class="relative overflow-hidden" style="scroll-margin-top: 4rem;"> <div class="contador-container">
+            <div class="contador-estilo">
+                <div id="sfc943ch95zsjdtf267h995s86cd2p47emb"></div>
+                <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=943ch95zsjdtf267h995s86cd2p47emb&down=async" async></script>
+                <noscript>
+                    <a href="https://www.contadorvisitasgratis.com" title="contador de visitas para blogger gratis">
+                        <img src="https://counter1.optistats.ovh/private/contadorvisitasgratis.php?c=943ch95zsjdtf267h995s86cd2p47emb" border="0" title="contador de visitas para blogger gratis" alt="contador de visitas para blogger gratis">
+                    </a>
+                </noscript>
+            </div>
+        </div>
+        
+        <div class="absolute inset-0 z-0 bg-black" style="top: 3rem;"> 
+             <div class="h-full w-full relative">
+                <div style="position:absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; transform: translate(-50%, -50%);">
+                    <div style="padding: 177.78% 0 0 0; position: relative;">
+                        <iframe 
+                            src="https://player.vimeo.com/video/1136784731?background=1&autoplay=1&loop=1&title=0&byline=0&portrait=0&muted=1" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture" 
+                            allowfullscreen 
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                            title="drone-video"
+                        ></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute inset-0 z-10 bg-black opacity-50" style="top: 3rem;"></div> <div class="absolute inset-0 z-20 flex items-center justify-center text-center" style="top: 3rem;">
+            <div class="max-w-4xl px-4">
+                <img id="hero-logo" src="./logo.png" alt="Logo Serco" class="hero-logo-img mx-auto">
+                <p class="text-xl sm:text-2xl text-gray-200 mb-10 text-shadow">
+                    Soluciones integrales de <span class="font-extrabold text-primary transition-colors duration-500">Alta Precisión</span>. Desde la cimentación hasta la difusión digital.
+                </p>
+                <a href="#servicios" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white btn-accent transition duration-300 transform hover:scale-105">
+                    Conoce Nuestros Servicios
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="servicios" class="py-20 bg-main transition-colors duration-500" style="scroll-margin-top: 4rem;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 id="titulo-servicios" class="text-4xl font-bold text-center mb-16 text-primary">Nuestros Pilares de Servicio</h2>
+
+            <div class="flex flex-col md:flex-row gap-10">
+                <div class="md:w-1/3 space-y-4">
+                    <button class="service-tab w-full text-left p-4 rounded-xl font-semibold text-lg transition duration-300 bg-card hover:bg-gray-200 dark:hover:bg-gray-700 border-l-4 border-primary shadow-lg dark:border-primary" data-target="construccion">
+                        <i class="fas fa-hammer mr-3 text-primary"></i> Construcción Estructural
+                    </button>
+                    <button class="service-tab w-full text-left p-4 rounded-xl font-semibold text-lg transition duration-300 bg-card hover:bg-gray-200 dark:hover:bg-gray-700 border-l-4 border-transparent" data-target="carpinteria">
+                        <i class="fas fa-couch mr-3 text-primary"></i> Carpintería
+                    </button>
+                    <button class="service-tab w-full text-left p-4 rounded-xl font-semibold text-lg transition duration-300 bg-card hover:bg-gray-200 dark:hover:bg-gray-700 border-l-4 border-transparent" data-target="pavimentacion">
+                        <i class="fas fa-road mr-3 text-primary"></i> Pavimentación
+                    </button>
+                    <button class="service-tab w-full text-left p-4 rounded-xl font-semibold text-lg transition duration-300 bg-card hover:bg-gray-200 dark:hover:bg-gray-700 border-l-4 border-transparent" data-target="senalizacion">
+                        <i class="fas fa-signs-post mr-3 text-primary"></i> Señalización 
+                    </button>
+                </div>
+                
+                <div id="service-content-wrapper" class="md:w-2/3 p-6 bg-card rounded-xl shadow-2xl border-t-4 border-primary transition-colors duration-500">
+                    <div id="construccion" class="service-content">
+                        <h3 id="construccion-title" class="service-title-target text-3xl font-bold text-primary mb-4"><i class="fas fa-city mr-2"></i> Construcción Estructural</h3>
+                        <p class="text-xl font-medium text-card-text mb-4">"Cimientos sólidos para el futuro."</p>
+                        <p class="text-card-text opacity-80 mb-6">Nuestro equipo transforma el terreno en una estructura funcional y duradera. Desde la base hasta el último muro, garantizamos precisión, resistencia y el cumplimiento riguroso de normativas, asegurando que su proyecto se levante sobre pilares inquebrantables.</p>
+                        <h4 class="text-xl font-semibold text-card-text mb-3">Subservicios:</h4>
+                        <ul class="list-disc list-inside text-card-text opacity-70 grid grid-cols-2 gap-2">
+                            <li>Banquetas</li>
+                            <li>Barda perimetral</li>
+                            <li>Pisos y losas</li>
+                            <li>Cimentación</li>
+                            <li>Muros</li>
+                            <li>Preparación para instalaciones (eléctrica, agua, drenaje y gas)</li>
+                        </ul>
+                    </div>
+
+                    <div id="carpinteria" class="service-content hidden">
+                        <h3 id="carpinteria-title" class="service-title-target text-3xl font-bold text-primary mb-4"><i class="fas fa-tree-city mr-2"></i> Carpintería</h3>
+                        <p class="text-xl font-medium text-card-text mb-4">"Diseño funcional con alma artesanal."</p>
+                        <p class="text-card-text opacity-80 mb-6">Combinamos la estética moderna con la durabilidad de la madera. Nos especializamos en crear, adaptar y restaurar elementos que añaden calidez y valor a su espacio, desde estructuras funcionales hasta detalles de acabado.</p>
+                        <h4 class="text-xl font-semibold text-card-text mb-3">Subservicios:</h4>
+                        <ul class="list-disc list-inside text-card-text opacity-70 grid grid-cols-2 gap-2">
+                            <li>Fabricación</li>
+                            <li>Instalación</li>
+                            <li>Adaptación</li>
+                            <li>Reparación</li>
+                            <li>Restauración</li>
+                        </ul>
+                    </div>
+
+                    <div id="pavimentacion" class="service-content hidden">
+                        <h3 id="pavimentacion-title" class="service-title-target text-3xl font-bold text-primary mb-4"><i class="fas fa-truck-monster mr-2"></i> Pavimentación</h3>
+                        <p class="text-xl font-medium text-card-text mb-4">"Flujo continuo, infraestructura de calidad."</p>
+                        <p class="text-card-text opacity-80 mb-6">Ofrecemos soluciones de pavimentación de alto rendimiento para cualquier escala de proyecto. Desde la reparación puntual hasta el desarrollo de grandes vías urbanas y estacionamientos, nuestra meta es asegurar superficies seguras y resistentes al tráfico.</p>
+                        <h4 class="text-xl font-semibold text-card-text mb-3">Subservicios:</h4>
+                        <ul class="list-disc list-inside text-card-text opacity-70 grid grid-cols-2 gap-2">
+                            <li>Pequeños negocios</li>
+                            <li>Estacionamientos</li>
+                            <li>Bacheo y mantenimiento</li>
+                            <li>Reparación de vías</li>
+                            <li>Grandes proyectos</li>
+                        </ul>
+                    </div>
+
+                    <div id="senalizacion" class="service-content hidden">
+                        <h3 id="senalizacion-title" class="service-title-target text-3xl font-bold text-primary mb-4"><i class="fas fa-vector-square mr-2"></i> Señalización</h3>
+                        <p class="text-xl font-medium text-card-text mb-4">"Comunicación clara en cada dirección."</p>
+                        <p class="text-card-text opacity-80 mb-6">Más que solo letreros, somos creadores de identidad visual funcional. Diseñamos e implementamos sistemas de señalización que guían, informan y refuerzan su imagen corporativa en el entorno físico y digital.</p>
+                        <h4 class="text-xl font-semibold text-card-text mb-3">Subservicios:</h4>
+                        <ul class="list-disc list-inside text-card-text opacity-70 grid grid-cols-2 gap-2">
+                            <li>Diseño gráfico</li>
+                            <li>Señales y Letreros oficiales</li>
+                            <li>Imagen corporativa</li>
+                            <li>Papeleria personalizada</li>
+                            <li>Publicidad impresa y digital</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="proyectos" class="py-20 bg-main transition-colors duration-500" style="scroll-margin-top: 4rem;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-10 text-primary">Galería de Proyectos</h2>
+            <p class="text-center text-lg text-card-text opacity-80 mb-12">Nuestros trabajos hablan por sí mismos. Inspecciona la calidad y escala de los proyectos de Serco.</p>
+
+            <div class="relative max-w-6xl mx-auto bg-card rounded-xl shadow-2xl overflow-hidden border border-card transition-colors duration-500">
+                <div id="gallery-container" class="relative">
+                    </div>
+                
+                <button id="prev-btn" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition duration-300 z-10">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button id="next-btn" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition duration-300 z-10">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="cobertura" class="py-20 bg-card transition-colors duration-500" style="scroll-margin-top: 4rem;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold mb-4 text-accent"><i class="fas fa-drone-alt mr-2"></i> Cobertura Aérea</h2>
+            <p class="text-xl text-card-text opacity-80 max-w-3xl mx-auto mb-10">
+                <strong>"La perspectiva que su proyecto necesita."</strong> Utilizamos tecnología de vanguardia para capturar datos e imágenes desde el aire. Nuestros servicios de fotografía y video con drones proporcionan una visión detallada para monitoreo, inspección y difusión impactante en redes.
+            </p>
+            <div class="grid md:grid-cols-5 gap-4 text-center">
+                
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500">
+                    <i class="fas fa-camera text-3xl text-primary mb-2"></i>
+                    <p class="font-semibold text-card-text">Fotografía</p>
+                    <p class="text-xs text-card-text opacity-70 mt-1">Captura de imágenes de alta resolución para inspección de avance y documentación.</p>
+                </div>
+                
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500">
+                    <i class="fas fa-video text-3xl text-primary mb-2"></i>
+                    <p class="font-semibold text-card-text">Video</p>
+                    <p class="text-xs text-card-text opacity-70 mt-1">Grabación aérea para seguimiento de obra y creación de contenido promocional.</p>
+                </div>
+                
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500">
+                    <i class="fas fa-route text-3xl text-primary mb-2"></i>
+                    <p class="font-semibold text-card-text">Vuelo Programado</p>
+                    <p class="text-xs text-card-text opacity-70 mt-1">Rutas de vuelo automatizadas para monitoreo periódico y mediciones precisas.</p>
+                </div>
+                
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500">
+                    <i class="fas fa-film text-3xl text-primary mb-2"></i> 
+                    <p class="font-semibold text-card-text">Presentación Multimedia</p>
+                    <p class="text-xs text-card-text opacity-70 mt-1">Edición profesional de video y foto para informes a clientes o inversores.</p>
+                </div>
+                
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500">
+                    <i class="fas fa-share-nodes text-3xl text-primary mb-2"></i>
+                    <p class="font-semibold text-card-text">Difusión en Redes Sociales</p>
+                    <p class="text-xs text-card-text opacity-70 mt-1">Material optimizado para publicaciones y publicidad en plataformas digitales.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="py-20 bg-main transition-colors duration-500" style="scroll-margin-top: 4rem;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-16 text-accent">Hablemos de su Próximo Proyecto</h2>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="bg-card p-8 rounded-xl shadow-2xl border-t-4 border-accent transition-colors duration-500">
+                    <h3 class="text-2xl font-bold mb-6 text-card-text">Información de Serco</h3>
+                    <div class="space-y-6 text-lg text-card-text opacity-80">
+                        <p><i class="fas fa-envelope mr-4 text-primary"></i> <strong>Correo Electrónico:</strong> <a href="mailto:serco.mxli@gmail.com" class="hover:underline">serco.mxli@gmail.com</a></p>
+                        
+                        <p>
+                            <i class="fas fa-map-marker-alt mr-4 text-primary"></i> <strong>Dirección:</strong> <a href="https://www.google.com/maps/search/?api=1&query=Calle+Sur+%23113+Col.+Bellavista,+Mexicali" target="_blank" class="hover:underline hover:text-primary transition duration-300">
+                                Calle Sur #113 Col. Bellavista
+                            </a>
+                        </p>
+                        
+                        <p>
+                            <i class="fas fa-phone mr-4 text-primary"></i> <strong>Teléfono:</strong> <a href="tel:+526862512557" class="hover:underline hover:text-primary transition duration-300">
+                                686 251 2557
+                            </a>
+                        </p>
+                        
+                        <p>
+                            <a href="https://wa.me/5216864152935" target="_blank" class="inline-flex items-center hover:text-accent transition duration-300">
+                                <svg class="w-6 h-6 mr-4" viewBox="0 0 24 24" fill="currentColor" style="color:var(--color-accent)">
+                                    <path d="M12 2C6.477 2 2 6.477 2 12c0 3.09 1.34 5.92 3.56 7.84l-1.07 3.51 3.65-.98C8.94 21.6 10.45 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm4.84 14.16c-.07-.13-.23-.21-.47-.33-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.13-.53.13-.15.26-.56.78-.68.94-.12.16-.24.17-.44.06-.2-.1-.84-.31-1.6-1-1.18-1.05-1.98-2.35-2.22-2.75-.24-.4-.02-.62.11-.87.12-.24.27-.38.38-.63.11-.25.06-.47-.03-.68-.09-.22-.53-1.28-.73-1.75-.19-.45-.39-.38-.53-.38-.15 0-.32-.01-.49-.01-.17 0-.44.07-.67.31-.23.24-.87.85-.87 2.07 0 1.22.9 2.4 1.02 2.58.12.18 1.77 2.7 4.29 3.74 2.53 1.04 2.53.71 2.82.66.29-.05.94-.38 1.07-.74.13-.36.13-.67.09-.74-.04-.07-.15-.12-.31-.2z"/>
+                                </svg>
+                                <strong>WhatsApp:</strong> <a href="tel:+526864152935" class="hover:underline hover:text-primary transition duration-300 ml-1">686 415 2935</a>
+                            </a>
+                        </p>
+                        
+                        <p>
+                            <a href="https://www.facebook.com/profile.php?id=61581941466754" target="_blank" class="inline-flex items-center hover:text-primary transition duration-300">
+                                <i class="fab fa-facebook-square text-3xl mr-4 text-primary"></i>
+                                <strong>Serco Mxli</strong>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-card p-8 rounded-xl shadow-2xl border-t-4 border-primary transition-colors duration-500">
+                    <form id="contact-form" class="space-y-4" method="GET"> 
+                        <input type="text" id="name" name="name" placeholder="Nombre completo" class="w-full p-3 bg-main border border-card rounded-lg focus:ring-primary focus:border-primary transition-colors duration-500" required>
+                        <input type="email" id="email" name="email" placeholder="Correo electrónico" class="w-full p-3 bg-main border border-card rounded-lg focus:ring-primary focus:border-primary transition-colors duration-500" required>
+                        <input type="tel" id="phone" name="phone" placeholder="Teléfono" class="w-full p-3 bg-main border border-card rounded-lg focus:ring-primary focus:border-primary transition-colors duration-500" 
+                               pattern="^\+?[0-9\s-]{7,20}$" 
+                               title="Solo números, espacios, guiones y el signo '+' opcional al inicio."
+                               onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 43 || event.charCode == 45 || event.charCode == 32 || event.charCode == 8 || event.charCode == 0"
+                               inputmode="numeric" 
+                               >
+                        <textarea id="message" name="body" placeholder="Su mensaje o consulta" rows="4" class="w-full p-3 bg-main border border-card rounded-lg focus:ring-primary focus:border-primary transition-colors duration-500" required></textarea>
+                        
+                        <button type="submit" class="w-full py-3 mt-4 text-base font-semibold rounded-lg shadow-lg btn-submit transition duration-300 transform hover:scale-[1.01]">
+                            Enviar Consulta
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-card py-8 border-t border-card transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-card-text opacity-60">
+            <p>© <span id="current-year"></span> Todos los derechos reservados para Serco</p>
+        </div>
+    </footer>
+
+    <script src="https://player.vimeo.com/api/player.js"></script>
+
+    <script>
+        // SCRIPT PARA PERMITIR ESCRITURA EN INPUTS/TEXTAREAS Y NAVEGACIÓN (CAMBIO 1)
+        // Se revirtió la lógica para PERMITIR las teclas de navegación y solo evitar el menú contextual.
+        
+        // Permite la selección en inputs/textareas
+        document.querySelectorAll('input, textarea').forEach(el => {
+            el.addEventListener('keydown', function(e) {
+                // Se detiene la propagación para que no sea capturada por un listener global
+                e.stopPropagation(); 
+            });
+        });
+
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // -------------------------
+        // 0. Lógica de Prevención de Clic Derecho (Mantenida)
+        // -------------------------
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // -------------------------
+        // 1. Lógica del Modo Oscuro/Claro y Logos
+        // -------------------------
+        const htmlElement = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+
+        // Función para aplicar clases de color y logos según el modo
+        function applyThemeColors(isDarkMode) {
+            // Ajuste del ícono del toggle
+            themeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun text-xl' : 'fas fa-moon text-xl';
+        }
+
+        // Inicializar tema y toggle
+        const savedTheme = localStorage.getItem('theme');
+        // El modo predeterminado ahora será el del sistema o 'light' si no hay preferencia y el sistema es light
+        const isDark = savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+        // Inicializamos desde JS
+        if (isDark) {
+            htmlElement.classList.add('dark');
+            htmlElement.classList.remove('light');
+            localStorage.setItem('theme', 'dark'); // Aseguramos el storage si se inicia en dark
+            applyThemeColors(true);
+        } else {
+            // Si no es dark, se usa light (que es el modo base, pero añadimos la clase para consistencia)
+            htmlElement.classList.remove('dark');
+            htmlElement.classList.add('light');
+            localStorage.setItem('theme', 'light');
+            applyThemeColors(false);
+        }
+        
+
+        themeToggle.addEventListener('click', () => {
+            const isCurrentlyLight = htmlElement.classList.contains('light');
+            
+            if (isCurrentlyLight) {
+                htmlElement.classList.remove('light');
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                applyThemeColors(true);
+            } else {
+                htmlElement.classList.remove('dark');
+                htmlElement.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                applyThemeColors(false);
+            }
+        });
+
+        // -------------------------
+        // 2. Lógica del Menú Hamburguesa
+        // -------------------------
+        const menuButton = document.getElementById('menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // -------------------------
+        // 3. Lógica de Pestañas de Servicios (con Scroll al título de servicio)
+        // -------------------------
+        const serviceTabs = document.querySelectorAll('.service-tab');
+        const serviceContents = document.querySelectorAll('.service-content');
+        const contentWrapper = document.getElementById('service-content-wrapper');
+
+        serviceTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetId = tab.getAttribute('data-target');
+                const targetElement = document.getElementById(targetId);
+
+                // Ocultar todos los contenidos y restablecer estilos de las pestañas
+                serviceContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                serviceTabs.forEach(t => {
+                    t.classList.remove('border-primary');
+                    t.classList.add('border-transparent');
+                });
+
+                // Mostrar el contenido objetivo y actualizar el estilo de la pestaña
+                if (targetElement) {
+                    targetElement.classList.remove('hidden');
+                    tab.classList.remove('border-transparent');
+                    tab.classList.add('border-primary');
+                    
+                    // SCROLL AL TÍTULO DEL SERVICIO ESPECÍFICO (service-title-target)
+                    const targetTitleId = `${targetId}-title`;
+                    const targetTitle = document.getElementById(targetTitleId);
+                    
+                    if(targetTitle) {
+                        targetTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                        // Si no encuentra el título, hace scroll al contenedor general del contenido
+                        contentWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+
+        // -------------------------
+        // 4. Lógica de la Galería de Proyectos (Carrusel)
+        // -------------------------
+        const galleryContainer = document.getElementById('gallery-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const totalImages = 20; // Hasta 20.jpg
+        let currentImageIndex = 1;
+
+        // Cargar las imágenes
+        function loadImages() {
+            for (let i = 1; i <= totalImages; i++) {
+                const img = document.createElement('img');
+                img.src = `./fotos/${i}.jpg`; 
+                img.onerror = function() {
+                    this.onerror = null; 
+                    img.src = `https://placehold.co/1200x400/111827/555555?text=fotos/${i}.jpg`;
+                };
+                img.alt = `Proyecto Serco - Imagen ${i}`;
+                img.id = `img-${i}`;
+                img.classList.add('gallery-image');
+                if (i === currentImageIndex) {
+                    img.classList.add('active');
+                }
+                galleryContainer.appendChild(img);
+            }
+        }
+
+        // Función para mostrar la imagen
+        function showImage(index) {
+            // Asegurar que el índice esté dentro del rango
+            if (index < 1) {
+                index = totalImages;
+            } else if (index > totalImages) {
+                index = 1;
+            }
+
+            // Ocultar todas las imágenes y luego mostrar la actual
+            document.querySelectorAll('.gallery-image').forEach(img => {
+                img.classList.remove('active');
+            });
+
+            const currentImg = document.getElementById(`img-${index}`);
+            if (currentImg) {
+                currentImg.classList.add('active');
+                currentImageIndex = index;
+            }
+        }
+
+        // Handlers de los botones
+        prevBtn.addEventListener('click', () => {
+            showImage(currentImageIndex - 1);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            showImage(currentImageIndex + 1);
+        });
+
+        // Autoplay del carrusel
+        setInterval(() => {
+            showImage(currentImageIndex + 1);
+        }, 5000); // Cambia cada 5 segundos
+
+        // Iniciar la galería al cargar
+        loadImages();
+
+        // -------------------------
+        // 5. Lógica del Formulario Mailto
+        // -------------------------
+        const contactForm = document.getElementById('contact-form');
+
+        contactForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const message = document.getElementById('message').value;
+
+            // Simple validación adicional para el campo de teléfono (solo para asegurar)
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput.value && !phoneInput.checkValidity()) {
+                alert("Por favor, ingresa un número de teléfono válido. Solo se permiten números, el signo '+' al inicio y espacios/guiones.");
+                return; 
+            }
+
+            // Construir el cuerpo del correo
+            const subject = encodeURIComponent(`Consulta de ${name} (Web Serco)`);
+            const body = encodeURIComponent(`
+Hola Serco,
+
+Mi nombre es ${name}, y mi consulta es la siguiente:
+
+${message}
+
+Mis datos de contacto son:
+Correo: ${email}
+Teléfono: ${phone || 'No proporcionado'}
+
+Saludos.
+            `);
+
+            // Generar el link mailto
+            const mailtoLink = `mailto:serco.mxli@gmail.com?subject=${subject}&body=${body}`;
+            
+            // Abrir el cliente de correo
+            window.location.href = mailtoLink;
+
+            // Opcional: limpiar formulario después de la acción
+            // contactForm.reset(); 
+        });
+
+    </script>
+</body>
+</html>
