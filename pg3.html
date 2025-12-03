@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -341,7 +340,7 @@
 
             <div class="relative max-w-6xl mx-auto bg-card rounded-xl shadow-2xl overflow-hidden border border-card transition-colors duration-500">
                 <div id="gallery-container" class="relative">
-                    </div>
+                </div>
                 
                 <button id="prev-btn" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition duration-300 z-10">
                     <i class="fas fa-chevron-left"></i>
@@ -589,65 +588,117 @@
         const galleryContainer = document.getElementById('gallery-container');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
-        const totalImages = 20; // Hasta 20.jpg
+        const totalImages = 50; // Hasta 50.jpg
         let currentImageIndex = 1;
+        let validImages = []; // Array para guardar solo los índices de las imágenes que cargaron correctamente
 
         // Cargar las imágenes
-        function loadImages() {
+        async function loadImages() {
+            // Limpiar el contenedor antes de empezar
+            galleryContainer.innerHTML = ''; 
+            validImages = [];
+            
+            let firstValidImageLoaded = false;
+
             for (let i = 1; i <= totalImages; i++) {
-                const img = document.createElement('img');
-                img.src = `./fotos/${i}.jpg`; 
-                img.onerror = function() {
-                    this.onerror = null; 
-                    img.src = `https://placehold.co/1200x400/111827/555555?text=fotos/${i}.jpg`;
-                };
-                img.alt = `Proyecto Serco - Imagen ${i}`;
-                img.id = `img-${i}`;
-                img.classList.add('gallery-image');
-                if (i === currentImageIndex) {
-                    img.classList.add('active');
+                const imagePath = `./fotos/${i}.jpg`;
+                
+                try {
+                    // Usamos fetch para verificar si la imagen existe (HEAD es más rápido)
+                    const response = await fetch(imagePath, { method: 'HEAD' });
+                    
+                    if (response.ok) {
+                        // Si existe, la añadimos al DOM y a la lista de imágenes válidas
+                        const img = document.createElement('img');
+                        img.src = imagePath;
+                        img.alt = `Proyecto Serco - Imagen ${i}`;
+                        img.id = `img-${i}`;
+                        img.classList.add('gallery-image');
+                        
+                        if (!firstValidImageLoaded) {
+                            img.classList.add('active'); // La primera imagen válida es la activa inicial
+                            currentImageIndex = i; // Establecemos el índice inicial
+                            firstValidImageLoaded = true;
+                        }
+                        
+                        galleryContainer.appendChild(img);
+                        validImages.push(i); // Guardamos el índice (el número del archivo)
+                    }
+                    // Si response no es ok (ej. 404), simplemente no hacemos nada (no placeholder)
+                } catch (error) {
+                    // Error de red, o el archivo no existe. Ignoramos.
+                    console.log(`Error al cargar la imagen ${i}.jpg:`, error.message);
                 }
-                galleryContainer.appendChild(img);
+            }
+            
+            // Si no hay imágenes válidas, desactivar botones y carrusel
+            if (validImages.length === 0) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                clearInterval(autoplayInterval);
+                galleryContainer.innerHTML = '<p class="text-center text-xl text-card-text p-4">Aún no hay proyectos cargados en la galería.</p>';
             }
         }
 
-        // Función para mostrar la imagen
-        function showImage(index) {
-            // Asegurar que el índice esté dentro del rango
-            if (index < 1) {
-                index = totalImages;
-            } else if (index > totalImages) {
-                index = 1;
-            }
+        // Función para mostrar la imagen (ahora basada en los índices válidos)
+        function showImage(direction) {
+            if (validImages.length === 0) return;
 
-            // Ocultar todas las imágenes y luego mostrar la actual
+            // Encontrar la posición del índice actual en el array validImages
+            let currentIndexInArray = validImages.indexOf(currentImageIndex);
+            
+            let newIndexInArray;
+
+            if (direction === 'next') {
+                newIndexInArray = (currentIndexInArray + 1) % validImages.length;
+            } else if (direction === 'prev') {
+                newIndexInArray = (currentIndexInArray - 1 + validImages.length) % validImages.length;
+            } else {
+                return; // No hacer nada si no se especifica dirección
+            }
+            
+            const newImageIndex = validImages[newIndexInArray];
+
+            // Ocultar todas las imágenes y luego mostrar la nueva
             document.querySelectorAll('.gallery-image').forEach(img => {
                 img.classList.remove('active');
             });
 
-            const currentImg = document.getElementById(`img-${index}`);
+            const currentImg = document.getElementById(`img-${newImageIndex}`);
             if (currentImg) {
                 currentImg.classList.add('active');
-                currentImageIndex = index;
+                currentImageIndex = newImageIndex;
             }
         }
 
         // Handlers de los botones
         prevBtn.addEventListener('click', () => {
-            showImage(currentImageIndex - 1);
+            showImage('prev');
         });
 
         nextBtn.addEventListener('click', () => {
-            showImage(currentImageIndex + 1);
+            showImage('next');
         });
 
         // Autoplay del carrusel
-        setInterval(() => {
-            showImage(currentImageIndex + 1);
-        }, 5000); // Cambia cada 5 segundos
-
+        let autoplayInterval;
+        
+        function startAutoplay() {
+            if (validImages.length > 1) {
+                autoplayInterval = setInterval(() => {
+                    showImage('next');
+                }, 5000); // Cambia cada 5 segundos
+            }
+        }
+        
+        // Pausar/Reanudar autoplay al interactuar
+        galleryContainer.addEventListener('mouseover', () => clearInterval(autoplayInterval));
+        galleryContainer.addEventListener('mouseleave', () => startAutoplay());
+        
         // Iniciar la galería al cargar
-        loadImages();
+        loadImages().then(() => {
+            startAutoplay(); // Iniciar solo después de que se hayan cargado las imágenes válidas
+        });
 
         // -------------------------
         // 5. Lógica del Formulario Mailto
