@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de administración del sitio SERCO">
+    <title>Panel SERCO</title>
+
+    <style>
+        :root {
+            --serco-blue: #009bff;
+            --serco-green: #34d399;
+            --bg: #0b1120;
+            --panel: #111827;
+            --panel-2: #172033;
+            --border: #263449;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at top right, #14213d 0, var(--bg) 45%);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        button, input, textarea, select { font: inherit; }
+        button { cursor: pointer; }
+
+        .app {
+            width: min(1400px, 100%);
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 18px 20px;
+            background: rgba(17, 24, 39, .92);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 15px 40px rgba(0,0,0,.22);
+            position: sticky;
+            top: 12px;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: .04em;
+        }
+
+        .brand small { color: var(--muted); }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 250px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 104px;
+            padding: 12px;
+            background: rgba(17, 24, 39, .94);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        .nav-button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 0;
+            border-radius: 12px;
+            padding: 13px 14px;
+            color: var(--muted);
+            background: transparent;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        .nav-button:hover,
+        .nav-button.active {
+            color: #fff;
+            background: #1e293b;
+        }
+
+        .content { min-width: 0; }
+
+        .panel {
+            background: rgba(17, 24, 39, .94);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 35px rgba(0,0,0,.16);
+            scroll-margin-top: 110px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .panel h2 { margin: 0 0 5px; font-size: 22px; }
+        .panel-description { margin: 0; color: var(--muted); line-height: 1.5; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 16px;
+        }
+
+        .field { margin-bottom: 16px; }
+        .field:last-child { margin-bottom: 0; }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: #0b1220;
+            color: var(--text);
+            border-radius: 10px;
+            padding: 11px 12px;
+            outline: none;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--serco-blue);
+            box-shadow: 0 0 0 3px rgba(0,155,255,.12);
+        }
+
+        textarea { min-height: 130px; resize: vertical; }
+
+        input[type="color"] {
+            width: 52px;
+            height: 42px;
+            padding: 3px;
+            border-radius: 9px;
+            border: 1px solid var(--border);
+            background: #0b1220;
+        }
+
+        .color-field {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-value {
+            color: var(--muted);
+            font-family: monospace;
+        }
+
+        .btn {
+            border: 1px solid transparent;
+            border-radius: 10px;
+            padding: 11px 15px;
+            font-weight: 700;
+            color: #fff;
+            background: #243047;
+        }
+
+        .btn:hover { filter: brightness(1.14); }
+        .btn-primary { background: var(--serco-blue); }
+        .btn-success { background: var(--serco-green); color: #06251a; }
+        .btn-danger { background: var(--danger); }
+        .btn-ghost { background: transparent; border-color: var(--border); }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 11px;
+            border-radius: 999px;
+            background: #0b1220;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--warning);
+        }
+
+        .status.ok .status-dot { background: var(--serco-green); }
+
+        .switch-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 13px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #0d1525;
+        }
+
+        .switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            flex: 0 0 auto;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            border-radius: 999px;
+            background: #334155;
+            transition: .2s;
+        }
+
+        .slider::before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 3px;
+            top: 3px;
+            border-radius: 50%;
+            background: white;
+            transition: .2s;
+        }
+
+        .switch input:checked + .slider { background: var(--serco-green); }
+        .switch input:checked + .slider::before { transform: translateX(22px); }
+
+        .gallery-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .gallery-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 14px;
+        }
+
+        .photo-card {
+            position: relative;
+            overflow: hidden;
+            background: #0d1525;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        .photo-card.disabled { opacity: .5; }
+
+        .photo-preview {
+            width: 100%;
+            height: 125px;
+            display: block;
+            object-fit: cover;
+            background: #020617;
+        }
+
+        .photo-info { padding: 10px; }
+        .photo-name { font-weight: 700; font-size: 13px; word-break: break-word; }
+        .photo-meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+        .photo-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 7px;
+            margin-top: 10px;
+        }
+
+        .photo-order {
+            width: 70px !important;
+            padding: 7px 8px !important;
+        }
+
+        .drop-zone {
+            border: 2px dashed #334155;
+            border-radius: 14px;
+            padding: 25px;
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 16px;
+            transition: .2s;
+        }
+
+        .drop-zone.dragover {
+            border-color: var(--serco-blue);
+            background: rgba(0,155,255,.08);
+            color: #fff;
+        }
+
+        .drop-zone strong { display: block; color: #fff; margin-bottom: 5px; }
+
+        .preview-area {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .preview-stage-wrap {
+            background: #070b13;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .preview-stage {
+            min-height: 390px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #0f172a;
+        }
+
+        .announcement-card {
+            width: min(100%, 700px);
+            min-height: 260px;
+            position: relative;
+            overflow: hidden;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            border-radius: 20px;
+            background: #ffffff;
+            color: #111827;
+            border: 2px solid transparent;
+            box-shadow: 0 18px 45px rgba(0,0,0,.28);
+            isolation: isolate;
+        }
+
+        .announcement-image {
+            position: absolute;
+            max-width: 90%;
+            max-height: 85%;
+            object-fit: contain;
+            z-index: -1;
+            transform-origin: center;
+            pointer-events: none;
+        }
+
+        .announcement-content { position: relative; z-index: 2; }
+
+        .announcement-title {
+            margin: 0 0 14px;
+            font-size: 32px;
+            line-height: 1.12;
+            font-weight: 800;
+        }
+
+        .announcement-text {
+            margin: 0;
+            white-space: pre-wrap;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .align-left { text-align: left; }
+        .align-center { text-align: center; }
+        .align-right { text-align: right; }
+
+        .position-left { left: 20px; top: 50%; transform: translateY(-50%); }
+        .position-right { right: 20px; top: 50%; transform: translateY(-50%); }
+        .position-behind { left: 50%; top: 50%; transform: translate(-50%, -50%); }
+
+        .control-group {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #0d1525;
+        }
+
+        .control-group h3 {
+            margin: 0 0 14px;
+            font-size: 15px;
+            color: #e2e8f0;
+        }
+
+        .segmented {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+
+        .segmented button {
+            border: 1px solid var(--border);
+            background: #111827;
+            color: var(--muted);
+            padding: 9px 7px;
+            border-radius: 8px;
+        }
+
+        .segmented button.active {
+            background: var(--serco-blue);
+            color: white;
+            border-color: var(--serco-blue);
+        }
+
+        .range-row {
+            display: grid;
+            grid-template-columns: 1fr 65px;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="range"] { width: 100%; }
+
+        .note {
+            padding: 13px 15px;
+            border-left: 3px solid var(--serco-blue);
+            background: rgba(0,155,255,.07);
+            color: #cbd5e1;
+            border-radius: 8px;
+            line-height: 1.5;
+            font-size: 13px;
+        }
+
+        .empty {
+            padding: 30px;
+            text-align: center;
+            color: var(--muted);
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+        }
+
+        .hidden { display: none !important; }
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 100;
+            min-width: 240px;
+            max-width: calc(100vw - 40px);
+            padding: 13px 15px;
+            border-radius: 12px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            box-shadow: 0 15px 35px rgba(0,0,0,.3);
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .25s;
+        }
+
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        @media (max-width: 1050px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
+            .nav-button { margin: 0; }
+            .preview-area { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 720px) {
+            .app { padding: 10px; }
+            .topbar { position: static; padding: 14px; }
+            .topbar, .panel-header { align-items: stretch; flex-direction: column; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .sidebar { grid-template-columns: 1fr; }
+            .gallery-list { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            .panel { padding: 16px; }
+            .preview-stage { min-height: 320px; padding: 10px; }
+            .announcement-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <header class="topbar">
+        <div class="brand">
+            <img src="../logo.png" alt="SERCO">
+            <div>
+                <h1>PANEL SERCO</h1>
+                <small>Administración del sitio web</small>
+            </div>
+        </div>
+        <div class="top-actions">
+            <span class="status" id="status"><span class="status-dot"></span><span id="statusText">Modo de prueba</span></span>
+            <button class="btn btn-primary" id="saveButton">Guardar configuración local</button>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <button class="nav-button active" data-target="galeria">📷 Galería</button>
+            <button class="nav-button" data-target="apariencia">🎨 Apariencia</button>
+            <button class="nav-button" data-target="comunicado">📢 Comunicado</button>
+        </aside>
+
+        <main class="content">
+            <section class="panel" id="galeria">
+                <div class="panel-header">
+                    <div>
+                        <h2>Galería y carrusel</h2>
+                        <p class="panel-description">Aquí se preparará la lista de imágenes que utilizará el carrusel público.</p>
+                    </div>
+                    <div class="status" id="galleryCount">0 imágenes</div>
+                </div>
+
+                <div class="drop-zone" id="dropZone">
+                    <strong>Subir fotografías</strong>
+                    Arrastra imágenes aquí o utiliza el botón para seleccionarlas.
+                    <div style="margin-top:12px">
+                        <button class="btn btn-primary" id="chooseFiles">Seleccionar fotografías</button>
+                        <input id="fileInput" type="file" accept="image/*" multiple class="hidden">
+                    </div>
+                </div>
+
+                <div class="gallery-toolbar">
+                    <div class="note" style="flex:1">Esta primera versión funciona como interfaz de administración y vista previa. Todavía no escribe archivos en GitHub. Esa conexión se añadirá en la siguiente etapa.</div>
+                    <button class="btn btn-ghost" id="clearGallery">Limpiar pruebas</button>
+                </div>
+
+                <div class="gallery-list" id="galleryList"></div>
+            </section>
+
+            <section class="panel" id="apariencia">
+                <div class="panel-header">
+                    <div>
+                        <h2>Apariencia</h2>
+                        <p class="panel-description">Configuración visual global que posteriormente será guardada en el archivo de configuración del sitio.</p>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="accentColor">Color complementario</label>
+                        <div class="color-field">
+                            <input type="color" id="accentColor" value="#009BFF">
+                            <span class="color-value" id="accentColorValue">#009BFF</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Vista previa</label>
+                        <div class="switch-row">
+                            <div>
+                                <strong>Aplicar al ejemplo</strong>
+                                <div style="color:var(--muted);font-size:13px;margin-top:3px">Actualiza el botón de prueba.</div>
+                            </div>
+                            <button class="btn" id="accentPreviewButton">Color SERCO</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" id="comunicado">
+                <div class="panel-header">
+                    <div>
+                        <h2>Comunicado / anuncio</h2>
+                        <p class="panel-description">Editor del tarjetón que podrá aparecer en la página pública.</p>
+                    </div>
+                    <div class="switch-row" style="padding:8px 10px">
+                        <span style="font-size:13px;font-weight:700">Mostrar</span>
+                        <label class="switch">
+                            <input type="checkbox" id="announcementVisible" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="preview-area">
+                    <div class="preview-stage-wrap">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                            <strong>Vista previa en tiempo real</strong>
+                            <span style="color:var(--muted);font-size:12px">El resultado se actualiza al modificar los controles.</span>
+                        </div>
+                        <div class="preview-stage">
+                            <article class="announcement-card" id="announcementPreview">
+                                <img class="announcement-image hidden" id="announcementImage" alt="Imagen del comunicado">
+                                <div class="announcement-content">
+                                    <h3 class="announcement-title" id="previewTitle">Título del comunicado</h3>
+                                    <p class="announcement-text" id="previewText">Escribe aquí el texto principal del anuncio o comunicado.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="control-group">
+                            <h3>Tarjetón</h3>
+                            <div class="grid-2">
+                                <div class="field">
+                                    <label for="cardBg">Color de fondo</label>
+                                    <div class="color-field">
+                                        <input type="color" id="cardBg" value="#FFFFFF">
+                                        <span class="color-value" id="cardBgValue">#FFFFFF</span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="cardBorder">Color del borde</label>
+                                    <div class="color-field">
+                                        <input type="color" id="cardBorder" value="#009BFF">
+                                        <span class="color-value" id="cardBorderValue">#009BFF</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid-2">
+                                <div class="field">
+                                    <label for="cardRadius">Esquinas: <span id="cardRadiusValue">20</span> px</label>
+                                    <input type="range" id="cardRadius" min="0" max="60" value="20">
+                                </div>
+                                <div class="field">
+                                    <label for="cardBorderWidth">Borde: <span id="cardBorderWidthValue">2</span> px</label>
+                                    <input type="range" id="cardBorderWidth" min="0" max="12" value="2">
+                                </div>
+                            </div>
+
+                            <div class="switch-row">
+                                <div><strong>Sombra</strong><div style="color:var(--muted);font-size:12px">Agrega profundidad al tarjetón.</div></div>
+                                <label class="switch"><input type="checkbox" id="cardShadow" checked><span class="slider"></span></label>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h3>Título</h3>
+                            <div class="field">
+                                <label for="titleText">Texto</label>
+                                <input type="text" id="titleText" value="Título del comunicado">
+                            </div>
+                            <div class="grid-2">
+                                <div class="field">
+                                    <label for="titleColor">Color</label>
+                                    <div class="color-field"><input type="color" id="titleColor" value="#111827"><span class="color-value" id="titleColorValue">#111827</span></div>
+                                </div>
+                                <div class="field">
+                                    <label for="titleSize">Tamaño: <span id="titleSizeValue">32</span> px</label>
+                                    <input type="range" id="titleSize" min="12" max="72" value="32">
+                                </div>
+                            </div>
+                            <div class="grid-2">
+                                <div class="switch-row"><span>Negrita</span><label class="switch"><input type="checkbox" id="titleBold" checked><span class="slider"></span></label></div>
+                                <div class="switch-row"><span>Cursiva</span><label class="switch"><input type="checkbox" id="titleItalic"><span class="slider"></span></label></div>
+                            </div>
+                            <div class="field" style="margin-top:15px">
+                                <label>Alineación</label>
+                                <div class="segmented" data-target="titleAlign">
+                                    <button data-value="left">Izquierda</button>
+                                    <button data-value="center" class="active">Centro</button>
+                                    <button data-value="right">Derecha</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h3>Texto principal</h3>
+                            <div class="field">
+                                <label for="bodyText">Texto</label>
+                                <textarea id="bodyText">Escribe aquí el texto principal del anuncio o comunicado.</textarea>
+                            </div>
+                            <div class="grid-2">
+                                <div class="field">
+                                    <label for="bodyColor">Color</label>
+                                    <div class="color-field"><input type="color" id="bodyColor" value="#334155"><span class="color-value" id="bodyColorValue">#334155</span></div>
+                                </div>
+                                <div class="field">
+                                    <label for="bodySize">Tamaño: <span id="bodySizeValue">18</span> px</label>
+                                    <input type="range" id="bodySize" min="10" max="42" value="18">
+                                </div>
+                            </div>
+                            <div class="grid-2">
+                                <div class="switch-row"><span>Negrita</span><label class="switch"><input type="checkbox" id="bodyBold"><span class="slider"></span></label></div>
+                                <div class="switch-row"><span>Cursiva</span><label class="switch"><input type="checkbox" id="bodyItalic"><span class="slider"></span></label></div>
+                            </div>
+                            <div class="field" style="margin-top:15px">
+                                <label>Alineación</label>
+                                <div class="segmented" data-target="bodyAlign">
+                                    <button data-value="left">Izquierda</button>
+                                    <button data-value="center">Centro</button>
+                                    <button data-value="right">Derecha</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h3>Imagen del comunicado</h3>
+                            <div class="field">
+                                <label for="announcementImageInput">Seleccionar imagen</label>
+                                <input type="file" id="announcementImageInput" accept="image/*" style="width:100%">
+                            </div>
+                            <div class="grid-2">
+                                <div class="field">
+                                    <label>Posición</label>
+                                    <select id="imagePosition">
+                                        <option value="left">Izquierda del texto</option>
+                                        <option value="right">Derecha del texto</option>
+                                        <option value="behind">Centro detrás del texto</option>
+                                    </select>
+                                </div>
+                                <div class="field">
+                                    <label for="imageSize">Tamaño: <span id="imageSizeValue">70</span>%</label>
+                                    <input type="range" id="imageSize" min="10" max="120" value="70">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="imageRotation">Ángulo de giro: <span id="imageRotationValue">0</span>°</label>
+                                <input type="range" id="imageRotation" min="-180" max="180" value="0">
+                            </div>
+                            <button class="btn btn-ghost" id="removeAnnouncementImage">Quitar imagen</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+    'use strict';
+
+    const STORAGE_KEY = 'serco_dashboard_draft_v1';
+
+    const state = {
+        accentColor: '#009BFF',
+        gallery: [],
+        announcement: {
+            visible: true,
+            card: {
+                background: '#FFFFFF',
+                border: '#009BFF',
+                radius: 20,
+                borderWidth: 2,
+                shadow: true
+            },
+            title: {
+                text: 'Título del comunicado',
+                color: '#111827',
+                size: 32,
+                bold: true,
+                italic: false,
+                align: 'center'
+            },
+            body: {
+                text: 'Escribe aquí el texto principal del anuncio o comunicado.',
+                color: '#334155',
+                size: 18,
+                bold: false,
+                italic: false,
+                align: 'center'
+            },
+            image: {
+                dataUrl: '',
+                position: 'behind',
+                size: 70,
+                rotation: 0
+            }
+        }
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function showToast(message) {
+        const toast = $('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function setStatus(message, ok) {
+        $('statusText').textContent = message;
+        $('status').classList.toggle('ok', !!ok);
+    }
+
+    function saveLocal() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            setStatus('Borrador guardado localmente', true);
+            showToast('Configuración guardada en este dispositivo.');
+        } catch (error) {
+            showToast('No fue posible guardar el borrador local.');
+        }
+    }
+
+    function loadLocal() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const saved = JSON.parse(raw);
+            if (saved.accentColor) state.accentColor = saved.accentColor;
+            if (Array.isArray(saved.gallery)) state.gallery = saved.gallery;
+            if (saved.announcement) {
+                state.announcement = Object.assign({}, state.announcement, saved.announcement);
+                state.announcement.card = Object.assign({}, state.announcement.card, saved.announcement.card || {});
+                state.announcement.title = Object.assign({}, state.announcement.title, saved.announcement.title || {});
+                state.announcement.body = Object.assign({}, state.announcement.body, saved.announcement.body || {});
+                state.announcement.image = Object.assign({}, state.announcement.image, saved.announcement.image || {});
+            }
+        } catch (error) {
+            console.warn('No se pudo recuperar el borrador local.', error);
+        }
+    }
+
+    function updateColorLabel(inputId, labelId) {
+        $(labelId).textContent = $(inputId).value.toUpperCase();
+    }
+
+    function renderGallery() {
+        const list = $('galleryList');
+        $('galleryCount').textContent = state.gallery.length + (state.gallery.length === 1 ? ' imagen' : ' imágenes');
+
+        if (!state.gallery.length) {
+            list.innerHTML = '<div class="empty" style="grid-column:1/-1">Todavía no hay fotografías cargadas en esta vista de prueba.</div>';
+            return;
+        }
+
+        state.gallery.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+        list.innerHTML = state.gallery.map((photo, index) => `
+            <article class="photo-card ${photo.enabled ? '' : 'disabled'}" data-index="${index}">
+                <img class="photo-preview" src="${photo.url}" alt="${escapeHtml(photo.name)}">
+                <div class="photo-info">
+                    <div class="photo-name">${escapeHtml(photo.name)}</div>
+                    <div class="photo-meta">${photo.enabled ? 'Visible en carrusel' : 'Oculta del carrusel'}</div>
+                    <div class="photo-actions">
+                        <input class="photo-order" type="number" min="1" value="${photo.order}" title="Orden">
+                        <label class="switch" title="Mostrar en carrusel">
+                            <input type="checkbox" class="photo-toggle" ${photo.enabled ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                        <button class="btn btn-danger remove-photo" type="button">Eliminar</button>
+                    </div>
+                </div>
+            </article>
+        `).join('');
+
+        list.querySelectorAll('.photo-card').forEach(card => {
+            const index = Number(card.dataset.index);
+            card.querySelector('.photo-order').addEventListener('change', e => {
+                state.gallery[index].order = Math.max(1, Number(e.target.value) || 1);
+                renderGallery();
+            });
+            card.querySelector('.photo-toggle').addEventListener('change', e => {
+                state.gallery[index].enabled = e.target.checked;
+                renderGallery();
+            });
+            card.querySelector('.remove-photo').addEventListener('click', () => {
+                const photo = state.gallery[index];
+                if (photo.url && photo.url.startsWith('blob:')) URL.revokeObjectURL(photo.url);
+                state.gallery.splice(index, 1);
+                renderGallery();
+            });
+        });
+    }
+
+    function addGalleryFiles(files) {
+        const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+        imageFiles.forEach(file => {
+            state.gallery.push({
+                name: file.name,
+                url: URL.createObjectURL(file),
+                enabled: true,
+                order: state.gallery.length + 1
+            });
+        });
+        renderGallery();
+        if (imageFiles.length) showToast(imageFiles.length + ' fotografía(s) añadida(s) a la vista de prueba.');
+    }
+
+    function applyPreview() {
+        const a = state.announcement;
+        const card = $('announcementPreview');
+        const title = $('previewTitle');
+        const body = $('previewText');
+        const image = $('announcementImage');
+
+        card.style.backgroundColor = a.card.background;
+        card.style.borderColor = a.card.border;
+        card.style.borderWidth = a.card.borderWidth + 'px';
+        card.style.borderRadius = a.card.radius + 'px';
+        card.style.boxShadow = a.card.shadow ? '0 18px 45px rgba(0,0,0,.28)' : 'none';
+
+        title.textContent = a.title.text || ' ';
+        title.style.color = a.title.color;
+        title.style.fontSize = a.title.size + 'px';
+        title.style.fontWeight = a.title.bold ? '800' : '400';
+        title.style.fontStyle = a.title.italic ? 'italic' : 'normal';
+        title.className = 'announcement-title align-' + a.title.align;
+
+        body.textContent = a.body.text || ' ';
+        body.style.color = a.body.color;
+        body.style.fontSize = a.body.size + 'px';
+        body.style.fontWeight = a.body.bold ? '700' : '400';
+        body.style.fontStyle = a.body.italic ? 'italic' : 'normal';
+        body.className = 'announcement-text align-' + a.body.align;
+
+        card.style.display = a.visible ? 'flex' : 'none';
+
+        if (a.image.dataUrl) {
+            image.src = a.image.dataUrl;
+            image.classList.remove('hidden');
+            image.className = 'announcement-image position-' + a.image.position;
+            image.style.width = a.image.size + '%';
+            image.style.transform = getImageTransform(a.image.position, a.image.rotation);
+            image.style.opacity = a.image.position === 'behind' ? '.35' : '1';
+        } else {
+            image.removeAttribute('src');
+            image.className = 'announcement-image hidden';
+        }
+
+        $('accentPreviewButton').style.backgroundColor = state.accentColor;
+        $('accentPreviewButton').style.borderColor = state.accentColor;
+    }
+
+    function getImageTransform(position, rotation) {
+        const angle = 'rotate(' + rotation + 'deg)';
+        if (position === 'left' || position === 'right') return 'translateY(-50%) ' + angle;
+        return 'translate(-50%, -50%) ' + angle;
+    }
+
+    function syncControlsFromState() {
+        $('accentColor').value = state.accentColor;
+        updateColorLabel('accentColor', 'accentColorValue');
+
+        const a = state.announcement;
+        $('announcementVisible').checked = a.visible;
+
+        $('cardBg').value = a.card.background;
+        $('cardBorder').value = a.card.border;
+        $('cardRadius').value = a.card.radius;
+        $('cardBorderWidth').value = a.card.borderWidth;
+        $('cardShadow').checked = a.card.shadow;
+
+        $('titleText').value = a.title.text;
+        $('titleColor').value = a.title.color;
+        $('titleSize').value = a.title.size;
+        $('titleBold').checked = a.title.bold;
+        $('titleItalic').checked = a.title.italic;
+
+        $('bodyText').value = a.body.text;
+        $('bodyColor').value = a.body.color;
+        $('bodySize').value = a.body.size;
+        $('bodyBold').checked = a.body.bold;
+        $('bodyItalic').checked = a.body.italic;
+
+        $('imagePosition').value = a.image.position;
+        $('imageSize').value = a.image.size;
+        $('imageRotation').value = a.image.rotation;
+
+        updateColorLabel('cardBg', 'cardBgValue');
+        updateColorLabel('cardBorder', 'cardBorderValue');
+        updateColorLabel('titleColor', 'titleColorValue');
+        updateColorLabel('bodyColor', 'bodyColorValue');
+        updateRangeLabels();
+        syncAlignmentButtons();
+        applyPreview();
+    }
+
+    function updateRangeLabels() {
+        $('cardRadiusValue').textContent = $('cardRadius').value;
+        $('cardBorderWidthValue').textContent = $('cardBorderWidth').value;
+        $('titleSizeValue').textContent = $('titleSize').value;
+        $('bodySizeValue').textContent = $('bodySize').value;
+        $('imageSizeValue').textContent = $('imageSize').value;
+        $('imageRotationValue').textContent = $('imageRotation').value;
+    }
+
+    function syncAlignmentButtons() {
+        document.querySelectorAll('.segmented').forEach(group => {
+            const target = group.dataset.target;
+            const value = target === 'titleAlign' ? state.announcement.title.align : state.announcement.body.align;
+            group.querySelectorAll('button').forEach(button => {
+                button.classList.toggle('active', button.dataset.value === value);
+            });
+        });
+    }
+
+    function bindControls() {
+        $('accentColor').addEventListener('input', e => {
+            state.accentColor = e.target.value;
+            updateColorLabel('accentColor', 'accentColorValue');
+            applyPreview();
+        });
+
+        $('announcementVisible').addEventListener('change', e => {
+            state.announcement.visible = e.target.checked;
+            applyPreview();
+        });
+
+        $('cardBg').addEventListener('input', e => { state.announcement.card.background = e.target.value; updateColorLabel('cardBg','cardBgValue'); applyPreview(); });
+        $('cardBorder').addEventListener('input', e => { state.announcement.card.border = e.target.value; updateColorLabel('cardBorder','cardBorderValue'); applyPreview(); });
+        $('cardRadius').addEventListener('input', e => { state.announcement.card.radius = Number(e.target.value); updateRangeLabels(); applyPreview(); });
+        $('cardBorderWidth').addEventListener('input', e => { state.announcement.card.borderWidth = Number(e.target.value); updateRangeLabels(); applyPreview(); });
+        $('cardShadow').addEventListener('change', e => { state.announcement.card.shadow = e.target.checked; applyPreview(); });
+
+        $('titleText').addEventListener('input', e => { state.announcement.title.text = e.target.value; applyPreview(); });
+        $('titleColor').addEventListener('input', e => { state.announcement.title.color = e.target.value; updateColorLabel('titleColor','titleColorValue'); applyPreview(); });
+        $('titleSize').addEventListener('input', e => { state.announcement.title.size = Number(e.target.value); updateRangeLabels(); applyPreview(); });
+        $('titleBold').addEventListener('change', e => { state.announcement.title.bold = e.target.checked; applyPreview(); });
+        $('titleItalic').addEventListener('change', e => { state.announcement.title.italic = e.target.checked; applyPreview(); });
+
+        $('bodyText').addEventListener('input', e => { state.announcement.body.text = e.target.value; applyPreview(); });
+        $('bodyColor').addEventListener('input', e => { state.announcement.body.color = e.target.value; updateColorLabel('bodyColor','bodyColorValue'); applyPreview(); });
+        $('bodySize').addEventListener('input', e => { state.announcement.body.size = Number(e.target.value); updateRangeLabels(); applyPreview(); });
+        $('bodyBold').addEventListener('change', e => { state.announcement.body.bold = e.target.checked; applyPreview(); });
+        $('bodyItalic').addEventListener('change', e => { state.announcement.body.italic = e.target.checked; applyPreview(); });
+
+        $('imagePosition').addEventListener('change', e => { state.announcement.image.position = e.target.value; applyPreview(); });
+        $('imageSize').addEventListener('input', e => { state.announcement.image.size = Number(e.target.value); updateRangeLabels(); applyPreview(); });
+        $('imageRotation').addEventListener('input', e => { state.announcement.image.rotation = Number(e.target.value); updateRangeLabels(); applyPreview(); });
+
+        document.querySelectorAll('.segmented').forEach(group => {
+            group.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const target = group.dataset.target;
+                    const value = button.dataset.value;
+                    if (target === 'titleAlign') state.announcement.title.align = value;
+                    if (target === 'bodyAlign') state.announcement.body.align = value;
+                    syncAlignmentButtons();
+                    applyPreview();
+                });
+            });
+        });
+
+        $('announcementImageInput').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                state.announcement.image.dataUrl = reader.result;
+                applyPreview();
+                showToast('Imagen del comunicado cargada en la vista de prueba.');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        $('removeAnnouncementImage').addEventListener('click', () => {
+            state.announcement.image.dataUrl = '';
+            $('announcementImageInput').value = '';
+            applyPreview();
+        });
+
+        $('saveButton').addEventListener('click', saveLocal);
+        $('clearGallery').addEventListener('click', () => {
+            state.gallery.forEach(photo => {
+                if (photo.url && photo.url.startsWith('blob:')) URL.revokeObjectURL(photo.url);
+            });
+            state.gallery = [];
+            renderGallery();
+        });
+
+        $('chooseFiles').addEventListener('click', () => $('fileInput').click());
+        $('fileInput').addEventListener('change', e => {
+            addGalleryFiles(e.target.files);
+            e.target.value = '';
+        });
+
+        const dropZone = $('dropZone');
+        ['dragenter','dragover'].forEach(eventName => dropZone.addEventListener(eventName, e => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        }));
+        ['dragleave','drop'].forEach(eventName => dropZone.addEventListener(eventName, e => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        }));
+        dropZone.addEventListener('drop', e => addGalleryFiles(e.dataTransfer.files));
+
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+                $(button.dataset.target).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    loadLocal();
+    bindControls();
+    syncControlsFromState();
+    renderGallery();
+})();
+</script>
+</body>
+</html>
