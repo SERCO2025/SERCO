@@ -157,7 +157,6 @@
             color: white;
         }
 
-        
         /* ESTILO PARA EL CONTENEDOR DEL CONTADOR */
         .contador-container {
             height: var(--contador-height); /* 2rem */
@@ -214,6 +213,46 @@
             opacity: 0;
             transform: translateX(100%); /* Desliza hacia la derecha para salir */
         }
+
+        /* --- COMUNICADO CONFIGURABLE --- */
+        .announcement-slot {
+            display: block;
+            width: 100%;
+        }
+        .announcement-slot:empty {
+            display: none;
+        }
+        .announcement {
+            width: min(1100px, calc(100% - 2rem));
+            margin: 2rem auto;
+            padding: 1.5rem 2rem;
+            box-sizing: border-box;
+            overflow: hidden;
+            position: relative;
+            text-align: center;
+        }
+        .announcement-content {
+            position: relative;
+            z-index: 2;
+        }
+        .announcement-title, .announcement-body {
+            margin: 0;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+        .announcement-title { margin-bottom: 0.75rem; }
+        .announcement-image {
+            position: absolute;
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        .announcement-image.behind { z-index: 1; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+        .announcement-image.left { z-index: 3; left: 1rem; top: 50%; transform: translateY(-50%); }
+        .announcement-image.right { z-index: 3; right: 1rem; top: 50%; transform: translateY(-50%); }
+        .announcement-image.hidden { display: none; }
+        /* --- FIN COMUNICADO CONFIGURABLE --- */
         /* --- FIN DE NUEVOS ESTILOS --- */
         
     </style>
@@ -296,6 +335,8 @@
             </div>
         </div>
     </section>
+
+    <div id="announcement-portada" class="announcement-slot"></div>
 
     <section id="servicios" class="py-20 bg-main transition-colors duration-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -395,6 +436,8 @@
             </div>
         </div>
     </section>
+
+    <div id="announcement-servicios" class="announcement-slot"></div>
     
     <section id="proyectos" class="py-20 bg-main transition-colors duration-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -414,6 +457,8 @@
             </div>
         </div>
     </section>
+
+    <div id="announcement-galeria" class="announcement-slot"></div>
 
     <section id="cobertura" class="py-20 bg-card transition-colors duration-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -455,6 +500,8 @@
             </div>
         </div>
     </section>
+
+    <div id="announcement-cobertura" class="announcement-slot"></div>
 
     <section id="contacto" class="py-20 bg-main transition-colors duration-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -516,6 +563,8 @@
             </div>
         </div>
     </section>
+
+    <div id="announcement-contacto" class="announcement-slot"></div>
 
     <footer class="bg-card py-8 border-t border-card transition-colors duration-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-card-text opacity-60">
@@ -700,78 +749,77 @@
         const galleryContainer = document.getElementById('gallery-container');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
-        const totalImages = 50; 
-        let currentImageIndex = 1;
+        let currentImageIndex = 0;
         let validImages = []; 
         let autoplayInterval; 
 
         async function loadImages() {
             galleryContainer.innerHTML = ''; 
             validImages = [];
-            
-            let firstValidImageLoaded = false;
+            currentImageIndex = 0;
+            prevBtn.style.display = '';
+            nextBtn.style.display = '';
 
-            for (let i = 1; i <= totalImages; i++) {
-                const imagePath = `./fotos/${i}.jpg`;
-                
-                try {
-                    const response = await fetch(imagePath, { method: 'HEAD' });
-                    
-                    if (response.ok) {
-                        const img = document.createElement('img');
-                        img.src = imagePath;
-                        img.alt = `Proyecto Serco - Imagen ${i}`;
-                        img.id = `img-${i}`;
-                        img.classList.add('gallery-image');
-                        
-                        if (!firstValidImageLoaded) {
-                            img.classList.add('active'); 
-                            currentImageIndex = i; 
-                            firstValidImageLoaded = true;
-                        }
-                        
-                        galleryContainer.appendChild(img);
-                        validImages.push(i); 
-                    }
-                } catch (error) {
-                    // console.log(`Error al cargar la imagen ${i}.jpg:`, error.message);
+            try {
+                const response = await fetch(`./fotos/imagenes.json?v=${Date.now()}`, { cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const manifest = await response.json();
+                validImages = manifest
+                    .filter(item => item && item.visible === true && typeof item.archivo === 'string' && item.archivo.trim())
+                    .map(item => ({
+                        archivo: item.archivo.trim(),
+                        orden: Number.isFinite(Number(item.orden)) ? Number(item.orden) : 999999
+                    }))
+                    .sort((a, b) => a.orden - b.orden)
+                    .map(item => item.archivo);
+
+                if (validImages.length === 0) {
+                    prevBtn.style.display = 'none';
+                    nextBtn.style.display = 'none';
+                    clearInterval(autoplayInterval);
+                    galleryContainer.innerHTML = '<p class="text-center text-xl text-card-text p-4">Aún no hay proyectos cargados en la galería.</p>';
+                    return;
                 }
-            }
-            
-            if (validImages.length === 0) {
+
+                validImages.forEach((imagePath, index) => {
+                    const img = document.createElement('img');
+                    img.src = `./fotos/${encodeURIComponent(imagePath)}`;
+                    img.alt = `Proyecto Serco - ${imagePath}`;
+                    img.dataset.index = String(index);
+                    img.classList.add('gallery-image');
+                    if (index === 0) img.classList.add('active');
+                    galleryContainer.appendChild(img);
+                });
+
+                currentImageIndex = 0;
+                prevBtn.style.display = '';
+                nextBtn.style.display = '';
+            } catch (error) {
                 prevBtn.style.display = 'none';
                 nextBtn.style.display = 'none';
                 clearInterval(autoplayInterval);
-                galleryContainer.innerHTML = '<p class="text-center text-xl text-card-text p-4">Aún no hay proyectos cargados en la galería.</p>';
+                galleryContainer.innerHTML = '<p class="text-center text-xl text-card-text p-4">No fue posible cargar la galería en este momento.</p>';
             }
         }
 
         function showImage(direction) {
             if (validImages.length === 0) return;
 
-            let currentIndexInArray = validImages.indexOf(currentImageIndex);
-            
-            let newIndexInArray;
-
             if (direction === 'next') {
-                newIndexInArray = (currentIndexInArray + 1) % validImages.length;
+                currentImageIndex = (currentImageIndex + 1) % validImages.length;
             } else if (direction === 'prev') {
-                newIndexInArray = (currentIndexInArray - 1 + validImages.length) % validImages.length;
+                currentImageIndex = (currentImageIndex - 1 + validImages.length) % validImages.length;
             } else {
-                return; 
+                return;
             }
-            
-            const newImageIndex = validImages[newIndexInArray];
 
             document.querySelectorAll('.gallery-image').forEach(img => {
                 img.classList.remove('active');
             });
 
-            const currentImg = document.getElementById(`img-${newImageIndex}`);
-            if (currentImg) {
-                currentImg.classList.add('active');
-                currentImageIndex = newImageIndex;
-            }
+            const currentImg = galleryContainer.querySelector(`.gallery-image[data-index="${currentImageIndex}"]`);
+            if (currentImg) currentImg.classList.add('active');
         }
 
         prevBtn.addEventListener('click', () => {
@@ -803,7 +851,112 @@
         });
 
         // -------------------------
-        // 5. Lógica del Formulario Mailto
+        // 5. Configuración remota del sitio y comunicado
+        // -------------------------
+        const announcementSlots = {
+            portada: document.getElementById('announcement-portada'),
+            servicios: document.getElementById('announcement-servicios'),
+            galeria: document.getElementById('announcement-galeria'),
+            cobertura: document.getElementById('announcement-cobertura'),
+            contacto: document.getElementById('announcement-contacto')
+        };
+
+        function validHex(value, fallback) {
+            return /^#[0-9a-fA-F]{6}$/.test(value || '') ? value : fallback;
+        }
+
+        function setSiteColors(config) {
+            const accent = validHex(config.accent, '#009BFF');
+            const siteBg = validHex(config.siteBg, '#0B1120');
+            document.documentElement.style.setProperty('--color-primary', accent);
+            document.documentElement.style.setProperty('--color-accent', accent);
+            document.documentElement.style.setProperty('--color-dark-bg', siteBg);
+            document.documentElement.style.setProperty('--color-light-bg', siteBg);
+        }
+
+        function fontFamily(font) {
+            const allowed = ['Merriweather','Montserrat','Baloo 2','Pacifico','Fredoka','Lato','Anton'];
+            return allowed.includes(font) ? `'${font.replace(/'/g, '')}', sans-serif` : 'Montserrat, sans-serif';
+        }
+
+        function createAnnouncement(data) {
+            const ann = data || {};
+            const title = ann.title || {};
+            const body = ann.body || {};
+            const image = ann.img || {};
+            const box = document.createElement('div');
+            box.className = 'announcement';
+            box.style.background = ann.bgVisible === false ? 'transparent' : validHex(ann.bg, '#FFFFFF');
+            box.style.border = ann.borderVisible === false ? 'none' : `${Math.max(0, Number(ann.borderWidth) || 0)}px solid ${validHex(ann.border, '#009BFF')}`;
+            box.style.borderRadius = `${Math.max(0, Number(ann.radius) || 0)}px`;
+            box.style.boxShadow = ann.shadow ? '0 10px 30px rgba(0,0,0,0.18)' : 'none';
+
+            const content = document.createElement('div');
+            content.className = 'announcement-content';
+            content.style.textAlign = ['left','center','right'].includes(title.align) ? title.align : 'center';
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'announcement-title';
+            titleEl.textContent = title.text || '';
+            titleEl.style.color = validHex(title.color, '#111827');
+            titleEl.style.fontSize = `${Math.max(1, Number(title.size) || 32)}px`;
+            titleEl.style.fontWeight = title.bold ? '700' : '400';
+            titleEl.style.fontStyle = title.italic ? 'italic' : 'normal';
+            titleEl.style.fontFamily = fontFamily(title.font);
+
+            const bodyEl = document.createElement('div');
+            bodyEl.className = 'announcement-body';
+            bodyEl.textContent = body.text || '';
+            bodyEl.style.color = validHex(body.color, '#334155');
+            bodyEl.style.fontSize = `${Math.max(1, Number(body.size) || 18)}px`;
+            bodyEl.style.fontWeight = body.bold ? '700' : '400';
+            bodyEl.style.fontStyle = body.italic ? 'italic' : 'normal';
+            bodyEl.style.fontFamily = fontFamily(body.font);
+            bodyEl.style.textAlign = ['left','center','right'].includes(body.align) ? body.align : 'center';
+
+            content.appendChild(titleEl);
+            content.appendChild(bodyEl);
+            box.appendChild(content);
+
+            if (image.data) {
+                const imageEl = document.createElement('img');
+                imageEl.className = 'announcement-image';
+                imageEl.src = image.data;
+                imageEl.alt = '';
+                const size = Math.max(1, Math.min(100, Number(image.size) || 70));
+                imageEl.style.width = `${size}%`;
+                imageEl.style.height = `${size}%`;
+                imageEl.style.transform = image.pos === 'behind' ? `translate(-50%, -50%) rotate(${Number(image.rot) || 0}deg)` : `translateY(-50%) rotate(${Number(image.rot) || 0}deg)`;
+                imageEl.classList.add(['left','right','behind'].includes(image.pos) ? image.pos : 'behind');
+                box.appendChild(imageEl);
+            }
+
+            return box;
+        }
+
+        async function loadSiteConfig() {
+            try {
+                const response = await fetch('./api/github?v=' + Date.now(), { cache: 'no-store' });
+                if (!response.ok) return;
+                const config = await response.json();
+                setSiteColors(config);
+
+                Object.values(announcementSlots).forEach(slot => slot.innerHTML = '');
+                const ann = config.announcement || {};
+                if (ann.visible !== true) return;
+
+                const location = ['portada','servicios','galeria','cobertura','contacto'].includes(ann.after) ? ann.after : 'portada';
+                const slot = announcementSlots[location];
+                if (slot) slot.appendChild(createAnnouncement(ann));
+            } catch (error) {
+                // El sitio conserva sus valores visuales originales si la configuración remota no está disponible.
+            }
+        }
+
+        loadSiteConfig();
+
+        // -------------------------
+        // 6. Lógica del Formulario Mailto
         // -------------------------
         const contactForm = document.getElementById('contact-form');
 
@@ -844,4 +997,3 @@ Saludos.
     </script>
 </body>
 </html>
-
