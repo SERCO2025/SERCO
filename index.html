@@ -39,7 +39,7 @@
             --color-dark-text: #f1f5f9; /* Slate-100 */
             --color-primary: #009bff; /* Azul Serco */
             --color-accent: #34d399; /* Verde Serco */
-            --color-derived: #1ed94f; /* Color derivado: +110 Green, -75 Blue */
+            --color-derived: #0009B4; /* Color derivado: +110 Green, -75 Blue */
             
             /* ALTURAS DEL ENCABEZADO */
             --navbar-height: 57px; /* 64px - 7px */
@@ -703,14 +703,15 @@
             if (!imageSrc) return;
             
             // Eliminar imagen anterior si existe
-            if (imageElement) {
-                imageElement.remove();
+            if(imageElement) {
+                imagePreviewContainer.innerHTML = '';
             }
             
             imageElement = document.createElement('img');
             imageElement.src = imageSrc;
-            imageElement.className = 'service-image-preview';
-            imageElement.alt = '';
+            imageElement.alt = `Vista previa de ${tab.textContent.trim()}`;
+            imageElement.classList.add('service-image-preview');
+            
             imagePreviewContainer.appendChild(imageElement);
             
             // Esperar el próximo frame para asegurar que el navegador reconozca el estado inicial (-100%)
@@ -860,7 +861,7 @@
         galleryContainer.addEventListener('mouseleave', () => startAutoplay());
         
         loadImages().then(() => {
-            startAutoplay();
+            startAutoplay(); 
         });
 
         // -------------------------
