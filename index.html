@@ -446,7 +446,7 @@
                 tab.classList.remove('border-transparent');
                 tab.classList.add('border-primary');
                 showImagePreview(tab);
-                if (window.innerWidth < 768 && window.matchMedia('(orientation: portrait)').matches) {
+                if (window.innerWidth <= 900 && window.matchMedia('(orientation: portrait)').matches) {
                     setTimeout(() => {
                         const navbar = document.querySelector('header');
                         const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 0;
