@@ -357,7 +357,11 @@
                 if (isMobile()) setTimeout(() => contentWrapper.scrollIntoView({behavior:'smooth',block:'start'}),50);
             }
         }
-        serviceTabs.forEach(tab => { tab.addEventListener('click', () => changeServiceContent(tab.getAttribute('data-target'),tab)); tab.addEventListener('mouseover',() => { if (!isMobile()) showImagePreview(tab); }); });
+        serviceTabs.forEach(tab => {
+            tab.addEventListener('click', () => changeServiceContent(tab.getAttribute('data-target'),tab));
+            tab.addEventListener('mouseover',() => { if (!isMobile()) showImagePreview(tab); });
+            tab.addEventListener('mouseout',() => { if (!isMobile()) hideImagePreview(); });
+        });
 
         const galleryContainer = document.getElementById('gallery-container');
         const prevBtn = document.getElementById('prev-btn');
