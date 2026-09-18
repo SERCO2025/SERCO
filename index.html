@@ -62,6 +62,7 @@
         .light input, .light textarea { background-color: var(--color-light-soft); color: #000000; border-color: var(--color-light-border); }
         .light .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,.10), 0 4px 6px -2px rgba(0,0,0,.05); }
 
+        /* MODO CLARO GLOBAL: los elementos oscuros pasan a superficies claras y el texto blanco a negro. */
         .light .text-white { color: #000000 !important; }
         .light .text-gray-200,
         .light .text-gray-300,
@@ -78,27 +79,33 @@
         .light .border-gray-200,
         .light .border-gray-300,
         .light .border-gray-400 { border-color: var(--color-light-border) !important; }
-        .light .dark\\:hover\\:bg-gray-700:hover { background-color: #e2e8f0 !important; }
+        .light .dark\:hover\:bg-gray-700:hover { background-color: #e2e8f0 !important; }
 
+        /* El contenido sobre el video conserva contraste en modo claro sin dejar una capa negra. */
         .light #inicio .absolute.inset-0.z-0 { background-color: #ffffff !important; }
         .light #inicio .absolute.inset-0.z-10 { background-color: #ffffff !important; opacity: .16 !important; }
         .light #inicio .text-shadow { text-shadow: 1px 1px 3px rgba(255,255,255,.9); }
         .light #inicio .text-white { color: #000000 !important; }
 
+        /* Botones con fondo propio: conservan texto blanco para mantener contraste. */
         .light .btn-accent { color: #ffffff !important; }
         .light .btn-submit { color: #ffffff !important; }
 
+        /* Contador: también participa en la conversión global del modo claro. */
         .light .contador-container { background-color: #ffffff; border-bottom: 1px solid var(--color-light-border); }
         .light .contador-estilo { color: #000000; }
 
+        /* Cuadros de cobertura en modo claro: gris 15% abajo hacia blanco arriba. */
         .light #cobertura .bg-main { background: linear-gradient(to top, #D9D9D9 0%, #FFFFFF 100%); }
         .light #cobertura .text-card-text { color: #000000; }
 
+        /* Controles del carrusel en modo claro. */
         .light #prev-btn, .light #next-btn {
             background-color: rgba(255,255,255,.88) !important;
             color: #000000 !important;
         }
 
+        /* Colores independientes de iconos solicitados. */
         .icon-email { color: #38BDF8 !important; }
         .icon-map { color: #EF0000 !important; }
         .icon-phone { color: #FFD000 !important; }
@@ -141,7 +148,7 @@
             }
         }
 
-        /* En pantallas pequeñas, la navbar ocupa el 70% de su altura original. */
+        /* En pantallas de hasta 900px, la navbar se reduce al 70% de su altura original. */
         @media (max-width:900px) {
             :root { --navbar-height:40px; }
             header > div:first-child { height:40px !important; }
@@ -207,3 +214,224 @@
     </header>
 
     <section id="inicio" class="relative overflow-hidden">
+        <div class="contador-container">
+            <div class="contador-estilo">
+                <div id="sfc943ch95zsjdtf267h995s86cd2p47emb"></div>
+                <script type="text/javascript" src="https://counter1.optistats.ovh/private/counter.js?c=943ch95zsjdtf267h995s86cd2p47emb&down=async" async></script>
+                <noscript><a href="https://www.contadorvisitasgratis.com" title="contador de visitas para blogger gratis"><img src="https://counter1.optistats.ovh/private/contadorvisitasgratis.php?c=943ch95s86cd2p47emb" border="0" title="contador de visitas para blogger gratis" alt="contador de visitas para blogger gratis"></a></noscript>
+            </div>
+        </div>
+        <div class="absolute inset-0 z-0 bg-black">
+            <div class="h-full w-full relative">
+                <div style="position:absolute;top:50%;left:50%;min-width:100%;min-height:100%;transform:translate(-50%,-50%);">
+                    <div style="padding:177.78% 0 0 0;position:relative;">
+                        <iframe src="https://player.vimeo.com/video/1136784731?background=1&autoplay=1&loop=1&title=0&byline=0&portrait=0&muted=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="drone-video"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute inset-0 z-10 bg-black opacity-50"></div>
+        <div class="absolute inset-0 z-20 flex items-center justify-center text-center">
+            <div class="max-w-4xl px-4">
+                <img id="hero-logo" src="./logo.png" alt="Logo Serco" class="hero-logo-img mx-auto">
+                <p class="text-xl sm:text-2xl text-gray-200 mb-10 text-shadow">Soluciones integrales de <span class="font-extrabold text-primary transition-colors duration-500">Alta Precisión</span>. Desde la cimentación hasta la difusión digital.</p>
+                <a href="#servicios" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white btn-accent transition duration-300 transform hover:scale-105">Conoce Nuestros Servicios</a>
+            </div>
+        </div>
+    </section>
+
+    <div id="announcement-portada" class="announcement-slot"></div>
+
+    <section id="servicios" class="py-20 bg-main transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 id="titulo-servicios" class="text-4xl font-bold text-center mb-16 text-primary">Nuestros Pilares de Servicio</h1>
+            <div class="flex flex-col md:flex-row gap-10">
+                <div class="md:w-1/3 space-y-4">
+                    <button class="service-tab w-full text-left p-4 rounded-xl font-semibold text-lg transition duration-300 bg-card hover:bg-gray-200 dark:hover:bg-gray-700 border-l-4 border-primary shadow-lg dark:border-primary" data-target="construccion" data-title-id="construccion-title" data-image-src="./servicios/construccion.jpg"><i class="fas fa-hammer mr-3 text-primary"></i> Construcción Estructural</button>
+                    <button class="service-tab w-full text-left p-4 rounded-xl font-semibold text-lg transition duration-300 bg-card hover:bg-gray-200 dark:hover:bg-gray-700 border-l-4 border-transparent shadow-lg" data-target="carpinteria" data-title-id="carpinteria-title" data-image-src="./servicios/carpinteria.jpg"><i class="fas fa-couch mr-3 text-primary"></i> Carpintería</button>
+                    <button class="service-tab w-full text-left p-4 rounded-xl font-semibold text-lg transition duration-300 bg-card hover:bg-gray-200 dark:hover:bg-gray-700 border-l-4 border-transparent shadow-lg" data-target="pavimentacion" data-title-id="pavimentacion-title" data-image-src="./servicios/pavimentacion.jpg"><i class="fas fa-road mr-3 text-primary"></i> Pavimentación</button>
+                    <button class="service-tab w-full text-left p-4 rounded-xl font-semibold text-lg transition duration-300 bg-card hover:bg-gray-200 dark:hover:bg-gray-700 border-l-4 border-transparent shadow-lg" data-target="senalizacion" data-title-id="senalizacion-title" data-image-src="./servicios/senalizacion.jpg"><i class="fas fa-signs-post mr-3 text-primary"></i> Señalización</button>
+                </div>
+                <div id="service-content-wrapper" class="md:w-2/3 p-6 bg-card rounded-xl shadow-2xl border-t-4 border-primary transition-colors duration-500">
+                    <div id="service-image-preview-container"></div>
+                    <div id="construccion" class="service-content">
+                        <h3 id="construccion-title" class="text-3xl font-bold text-primary mb-4"><i class="fas fa-city mr-2"></i> Construcción Estructural</h3>
+                        <p class="text-xl font-medium text-card-text mb-4">Cimientos sólidos para el futuro.</p>
+                        <p class="text-card-text opacity-80 mb-6">Nuestro equipo transforma el terreno en una estructura funcional y duradera. Desde la base hasta el último muro, garantizamos precisión, resistencia y el cumplimiento riguroso de normativas, asegurando que su proyecto se levante sobre pilares inquebrantables.</p>
+                        <h4 class="text-xl font-semibold text-card-text mb-3">Subservicios:</h4>
+                        <ul class="list-disc list-inside text-card-text opacity-70 grid grid-cols-2 gap-2"><li>Banquetas</li><li>Barda perimetral</li><li>Pisos y losas</li><li>Cimentación</li><li>Muros</li><li>Preparación para instalaciones (eléctrica, agua, drenaje y gas)</li></ul>
+                    </div>
+                    <div id="carpinteria" class="service-content hidden"><h3 id="carpinteria-title" class="text-3xl font-bold text-primary mb-4"><i class="fas fa-tree-city mr-2"></i> Carpintería</h3><p class="text-xl font-medium text-card-text mb-4">Diseño funcional con alma artesanal.</p><p class="text-card-text opacity-80 mb-6">Combinamos la estética moderna con la durabilidad de la madera. Nos especializamos en crear, adaptar y restaurar elementos que añaden calidez y valor a su espacio, desde estructuras funcionales hasta detalles de acabado.</p><h4 class="text-xl font-semibold text-card-text mb-3">Subservicios:</h4><ul class="list-disc list-inside text-card-text opacity-70 grid grid-cols-2 gap-2"><li>Fabricación</li><li>Instalación</li><li>Adaptación</li><li>Reparación</li><li>Restauración</li></ul></div>
+                    <div id="pavimentacion" class="service-content hidden"><h3 id="pavimentacion-title" class="text-3xl font-bold text-primary mb-4"><i class="fas fa-truck-monster mr-2"></i> Pavimentación</h3><p class="text-xl font-medium text-card-text mb-4">Flujo continuo, infraestructura de calidad.</p><p class="text-card-text opacity-80 mb-6">Ofrecemos soluciones de pavimentación de alto rendimiento para cualquier escala de proyecto. Desde la reparación puntual hasta el desarrollo de grandes vías urbanas y estacionamientos, nuestra meta es asegurar superficies seguras y resistentes al tráfico.</p><h4 class="text-xl font-semibold text-card-text mb-3">Subservicios:</h4><ul class="list-disc list-inside text-card-text opacity-70 grid grid-cols-2 gap-2"><li>Pequeños negocios</li><li>Estacionamientos</li><li>Bacheo y mantenimiento</li><li>Reparación de vías</li><li>Grandes proyectos</li></ul></div>
+                    <div id="senalizacion" class="service-content hidden"><h3 id="senalizacion-title" class="text-3xl font-bold text-primary mb-4"><i class="fas fa-vector-square mr-2"></i> Señalización</h3><p class="text-xl font-medium text-card-text mb-4">Comunicación clara en cada dirección.</p><p class="text-card-text opacity-80 mb-6">Más que solo letreros, somos creadores de identidad visual funcional. Diseñamos e implementamos sistemas de señalización que guían, informan y refuerzan su imagen corporativa en el entorno físico y digital.</p><h4 class="text-xl font-semibold text-card-text mb-3">Subservicios:</h4><ul class="list-disc list-inside text-card-text opacity-70 grid grid-cols-2 gap-2"><li>Diseño gráfico</li><li>Señales y Letreros oficiales</li><li>Imagen corporativa</li><li>Papeleria personalizada</li><li>Publicidad impresa y digital</li></ul></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="announcement-servicios" class="announcement-slot"></div>
+    <section id="proyectos" class="py-20 bg-main transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-10 text-primary">Galería de Proyectos</h2>
+            <p class="text-center text-lg text-card-text opacity-80 mb-12">Nuestros trabajos hablan por sí mismos. Inspecciona la calidad y escala de los proyectos de Serco.</p>
+            <div class="relative max-w-6xl mx-auto bg-card rounded-xl shadow-2xl overflow-hidden border border-card transition-colors duration-500">
+                <div id="gallery-container" class="relative"></div>
+                <button id="prev-btn" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition duration-300 z-10"><i class="fas fa-chevron-left"></i></button>
+                <button id="next-btn" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-75 transition duration-300 z-10"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <div id="announcement-galeria" class="announcement-slot"></div>
+    <section id="cobertura" class="py-20 bg-card transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold mb-4 text-accent"><i class="fas fa-drone-alt mr-2"></i> Cobertura Aérea</h2>
+            <p class="text-xl text-card-text opacity-80 max-w-3xl mx-auto mb-10"><strong>La perspectiva que su proyecto necesita.</strong> Utilizamos tecnología de vanguardia para capturar datos e imágenes desde el aire. Nuestros servicios de fotografía y video con drones proporcionan una visión detallada para monitoreo, inspección y difusión impactante en redes.</p>
+            <div class="grid md:grid-cols-5 gap-4 text-center">
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500"><i class="fas fa-camera text-3xl text-primary mb-2"></i><p class="font-semibold text-card-text">Fotografía</p><p class="text-xs text-card-text opacity-70 mt-1">Captura de imágenes de alta resolución para inspección de avance y documentación.</p></div>
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500"><i class="fas fa-video text-3xl text-primary mb-2"></i><p class="font-semibold text-card-text">Video</p><p class="text-xs text-card-text opacity-70 mt-1">Grabación aérea para seguimiento de obra y creación de contenido promocional.</p></div>
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500"><i class="fas fa-route text-3xl text-primary mb-2"></i><p class="font-semibold text-card-text">Vuelo Programado</p><p class="text-xs text-card-text opacity-70 mt-1">Rutas de vuelo automatizadas para monitoreo periódico y mediciones precisas.</p></div>
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500"><i class="fas fa-film text-3xl text-primary mb-2"></i><p class="font-semibold text-card-text">Presentación Multimedia</p><p class="text-xs text-card-text opacity-70 mt-1">Edición profesional de video y foto para informes a clientes o inversores.</p></div>
+                <div class="bg-main p-6 rounded-xl shadow-lg border border-card transition-colors duration-500"><i class="fas fa-share-nodes text-3xl text-primary mb-2"></i><p class="font-semibold text-card-text">Difusión en Redes Sociales</p><p class="text-xs text-card-text opacity-70 mt-1">Material optimizado para publicaciones y publicidad en plataformas digitales.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="announcement-cobertura" class="announcement-slot"></div>
+    <section id="contacto" class="py-20 bg-main transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-16 text-accent">Hablemos de su Próximo Proyecto</h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="bg-card p-8 rounded-xl shadow-2xl border-t-4 border-accent transition-colors duration-500">
+                    <h3 class="text-2xl font-bold mb-6 text-card-text">Información de Serco</h3>
+                    <div class="space-y-6 text-lg text-card-text opacity-80">
+                        <p><i class="fas fa-envelope mr-4 icon-email"></i> <strong>Correo Electrónico:</strong> <a href="mailto:serco.mxli@gmail.com" class="hover:underline">serco.mxli@gmail.com</a></p>
+                        <p><i class="fas fa-map-marker-alt mr-4 icon-map"></i> <strong>Dirección:</strong> <a href="https://www.google.com/maps/search/?api=1&query=Calle+Sur+%23113+Col.+Bellavista,+Mexicali" target="_blank" class="hover:underline hover:text-primary transition duration-300">Calle Sur #113 Col. Bellavista</a></p>
+                        <p><i class="fas fa-phone mr-4 icon-phone"></i> <strong>Teléfono:</strong> <a href="tel:+526862512557" class="hover:underline hover:text-primary transition duration-300">686 251 2557</a></p>
+                        <p><a href="https://wa.me/5216864152935" target="_blank" class="inline-flex items-center hover:text-primary transition duration-300"><i class="fab fa-whatsapp mr-4 icon-whatsapp"></i><strong>WhatsApp:</strong> <a href="tel:+526864152935" class="hover:underline hover:text-primary transition duration-300 ml-1">686 415 2935</a></a></p>
+                        <p><a href="https://www.facebook.com/profile.php?id=61581941466754" target="_blank" class="inline-flex items-center hover:text-primary transition duration-300"><i class="fab fa-facebook mr-4 icon-facebook"></i><strong>Serco Mxli</strong></a></p>
+                    </div>
+                </div>
+                <div class="bg-card p-8 rounded-xl shadow-2xl border-t-4 border-primary transition-colors duration-500">
+                    <form id="contact-form" class="space-y-4" method="GET">
+                        <input type="text" id="name" name="name" placeholder="Nombre completo" class="w-full p-3 bg-main border border-card rounded-lg focus:ring-primary focus:border-primary transition-colors duration-500" required>
+                        <input type="email" id="email" name="email" placeholder="Correo electrónico" class="w-full p-3 bg-main border border-card rounded-lg focus:ring-primary focus:border-primary transition-colors duration-500" required>
+                        <input type="tel" id="phone" name="phone" placeholder="Teléfono" class="w-full p-3 bg-main border border-card rounded-lg focus:ring-primary focus:border-primary transition-colors duration-500" pattern="^\+?[0-9\s-]{7,20}$" title="Solo números, espacios, guiones y el signo '+' opcional al inicio." onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 43 || event.charCode == 45 || event.charCode == 32 || event.charCode == 8 || event.charCode == 0" inputmode="numeric">
+                        <textarea id="message" name="body" placeholder="Su mensaje o consulta" rows="4" class="w-full p-3 bg-main border border-card rounded-lg focus:ring-primary focus:border-primary transition-colors duration-500" required></textarea>
+                        <button type="submit" class="w-full py-3 mt-4 text-base font-semibold rounded-lg shadow-lg btn-submit transition duration-300 transform hover:scale-[1.01]">Enviar Consulta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="announcement-contacto" class="announcement-slot"></div>
+    <footer class="bg-card py-[26px] border-t border-card transition-colors duration-500"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-card-text opacity-60"><p>© <span id="current-year"></span> Todos los derechos reservados para Serco</p></div></footer>
+
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script>
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        const htmlElement = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        function applyThemeColors(isDarkMode) { themeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun text-xl' : 'fas fa-moon text-xl'; }
+        const savedTheme = localStorage.getItem('theme');
+        const isDark = savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) { htmlElement.classList.add('dark'); htmlElement.classList.remove('light'); localStorage.setItem('theme','dark'); applyThemeColors(true); }
+        else { htmlElement.classList.remove('dark'); htmlElement.classList.add('light'); localStorage.setItem('theme','light'); applyThemeColors(false); }
+        themeToggle.addEventListener('click', () => { const isCurrentlyLight = htmlElement.classList.contains('light'); if (isCurrentlyLight) { htmlElement.classList.remove('light'); htmlElement.classList.add('dark'); localStorage.setItem('theme','dark'); applyThemeColors(true); } else { htmlElement.classList.remove('dark'); htmlElement.classList.add('light'); localStorage.setItem('theme','light'); applyThemeColors(false); } });
+
+        const menuButton = document.getElementById('menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuButton.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+
+        const serviceTabs = document.querySelectorAll('.service-tab');
+        const serviceContents = document.querySelectorAll('.service-content');
+        const contentWrapper = document.getElementById('service-content-wrapper');
+        const imagePreviewContainer = document.getElementById('service-image-preview-container');
+        let imageElement = null;
+        let imagePreviewTimer = null;
+        function isMobile() { return window.innerWidth < 768; }
+        function clearImagePreviewTimer() {
+            if (imagePreviewTimer) { clearTimeout(imagePreviewTimer); imagePreviewTimer = null; }
+        }
+        function hideImagePreview() {
+            clearImagePreviewTimer();
+            if (!imageElement) return;
+            imageElement.classList.remove('slide-in');
+            imageElement.classList.add('slide-out');
+            const elementToRemove = imageElement;
+            setTimeout(() => {
+                if (imagePreviewContainer.contains(elementToRemove)) elementToRemove.remove();
+                if (imageElement === elementToRemove) imageElement = null;
+            },500);
+        }
+        function showImagePreview(tab) {
+            const imageSrc = tab.getAttribute('data-image-src'); if (!imageSrc) return;
+            clearImagePreviewTimer();
+            if (imageElement) { imageElement.remove(); imageElement = null; }
+            imageElement = document.createElement('img');
+            imageElement.src = imageSrc;
+            imageElement.alt = `Vista previa de ${tab.textContent.trim()}`;
+            imageElement.classList.add('service-image-preview');
+            imagePreviewContainer.appendChild(imageElement);
+            requestAnimationFrame(() => imageElement.classList.add('slide-in'));
+            imagePreviewTimer = setTimeout(() => hideImagePreview(),3000);
+        }
+        function changeServiceContent(targetId, tab) {
+            const targetElement = document.getElementById(targetId);
+            serviceContents.forEach(content => content.classList.add('hidden'));
+            serviceTabs.forEach(t => { t.classList.remove('border-primary'); t.classList.add('border-transparent'); });
+            if (targetElement) {
+                targetElement.classList.remove('hidden');
+                tab.classList.remove('border-transparent');
+                tab.classList.add('border-primary');
+                showImagePreview(tab);
+                if (isMobile()) setTimeout(() => contentWrapper.scrollIntoView({behavior:'smooth',block:'start'}),50);
+            }
+        }
+        serviceTabs.forEach(tab => {
+            tab.addEventListener('click', () => changeServiceContent(tab.getAttribute('data-target'),tab));
+            tab.addEventListener('mouseover',() => { if (!isMobile()) showImagePreview(tab); });
+            tab.addEventListener('mouseout',() => { if (!isMobile()) hideImagePreview(); });
+        });
+
+        const galleryContainer = document.getElementById('gallery-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        let currentImageIndex=0, validImages=[], autoplayInterval;
+        async function loadImages() {
+            galleryContainer.innerHTML=''; validImages=[]; currentImageIndex=0; prevBtn.style.display=''; nextBtn.style.display='';
+            try {
+                const response=await fetch(`./fotos/imagenes.json?v=${Date.now()}`,{cache:'no-store'}); if(!response.ok) throw new Error(`HTTP ${response.status}`);
+                const manifest=await response.json();
+                validImages=manifest.filter(item=>item&&item.visible===true&&typeof item.archivo==='string'&&item.archivo.trim()).map(item=>({archivo:item.archivo.trim(),orden:Number.isFinite(Number(item.orden))?Number(item.orden):999999})).sort((a,b)=>a.orden-b.orden).map(item=>item.archivo);
+                if(validImages.length===0){prevBtn.style.display='none';nextBtn.style.display='none';clearInterval(autoplayInterval);galleryContainer.innerHTML='<p class="text-center text-xl text-card-text p-4">Aún no hay proyectos cargados en la galería.</p>';return;}
+                validImages.forEach((imagePath,index)=>{const img=document.createElement('img');img.src=`./fotos/${encodeURIComponent(imagePath)}`;img.alt=`Proyecto Serco - ${imagePath}`;img.dataset.index=String(index);img.classList.add('gallery-image');if(index===0)img.classList.add('active');galleryContainer.appendChild(img);});
+                currentImageIndex=0;prevBtn.style.display='';nextBtn.style.display='';
+            } catch(error){prevBtn.style.display='none';nextBtn.style.display='none';clearInterval(autoplayInterval);galleryContainer.innerHTML='<p class="text-center text-xl text-card-text p-4">No fue posible cargar la galería en este momento.</p>';}
+        }
+        function showImage(direction){if(validImages.length===0)return;if(direction==='next')currentImageIndex=(currentImageIndex+1)%validImages.length;else if(direction==='prev')currentImageIndex=(currentImageIndex-1+validImages.length)%validImages.length;else return;document.querySelectorAll('.gallery-image').forEach(img=>img.classList.remove('active'));const currentImg=galleryContainer.querySelector(`.gallery-image[data-index="${currentImageIndex}"]`);if(currentImg)currentImg.classList.add('active');}
+        prevBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('prev');startAutoplay();});
+        nextBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('next');startAutoplay();});
+        function startAutoplay(){clearInterval(autoplayInterval);if(validImages.length>1)autoplayInterval=setInterval(()=>showImage('next'),5000);}
+        galleryContainer.addEventListener('mouseover',()=>clearInterval(autoplayInterval)); galleryContainer.addEventListener('mouseleave',()=>startAutoplay());
+        loadImages().then(()=>startAutoplay());
+
+        const announcementSlots={portada:document.getElementById('announcement-portada'),servicios:document.getElementById('announcement-servicios'),galeria:document.getElementById('announcement-galeria'),cobertura:document.getElementById('announcement-cobertura'),contacto:document.getElementById('announcement-contacto')};
+        function validHex(value,fallback){return /^#[0-9a-fA-F]{6}$/.test(value||'')?value:fallback;}
+                function hslToHex(h,s,l){h=((h%360)+360)%360;s=Math.max(0,Math.min(1,s));l=Math.max(0,Math.min(1,l));const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return '#'+[r,g,b].map(v=>Math.round((v+m)*255).toString(16).padStart(2,'0')).join('').toUpperCase();}
+        function rgbToHsl(hex){const r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255,max=Math.max(r,g,b),min=Math.min(r,g,b);let h=0,s=0,l=(max+min)/2;if(max!==min){const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);if(max===r)h=((g-b)/d+(g<b?6:0))/6;else if(max===g)h=((b-r)/d+2)/6;else h=((r-g)/d+4)/6;}return [h*360,s,l];}
+        function buildColorRoutes(hex){const [h,s,l]=rgbToHsl(hex);return {a:{secondary:hslToHex(h+60,s,l),tertiary:hslToHex(h+30,s,l)},b:{secondary:hslToHex(h-60,s,l),tertiary:hslToHex(h-30,s,l)}};}
+        function setSiteColors(config){const primary=validHex(config.accent,'#009BFF');const routes=buildColorRoutes(primary);const choice=config.secondaryChoice==='b'?'b':'a';const secondary=validHex(config.secondary,routes[choice].secondary);const tertiary=validHex(config.tertiary,routes[choice].tertiary);const siteBg=validHex(config.siteBg,'#0B1120');document.documentElement.style.setProperty('--color-primary',primary);document.documentElement.style.setProperty('--color-accent',secondary);document.documentElement.style.setProperty('--color-derived',tertiary);document.documentElement.style.setProperty('--color-dark-bg',siteBg);}
+        function fontFamily(font){const allowed=['Merriweather','Montserrat','Baloo 2','Pacifico','Fredoka','Lato','Anton'];return allowed.includes(font)?`'${font.replace(/'/g,'')}', sans-serif`:'Montserrat, sans-serif';}
+        function createAnnouncement(data){const ann=data||{},title=ann.title||{},body=ann.body||{},image=ann.img||{};const box=document.createElement('div');box.className='announcement';box.style.background=ann.bgVisible===false?'transparent':validHex(ann.bg,'#FFFFFF');box.style.border=ann.borderVisible===false?'none':`${Math.max(0,Number(ann.borderWidth)||0)}px solid ${validHex(ann.border,'#009BFF')}`;box.style.borderRadius=`${Math.max(0,Number(ann.radius)||0)}px`;box.style.boxShadow=ann.shadow?'0 10px 30px rgba(0,0,0,.18)':'none';const content=document.createElement('div');content.className='announcement-content';content.style.textAlign=['left','center','right'].includes(title.align)?title.align:'center';const titleEl=document.createElement('div');titleEl.className='announcement-title';titleEl.textContent=title.text||'';titleEl.style.color=validHex(title.color,'#111827');titleEl.style.fontSize=`${Math.max(1,Number(title.size)||32)}px`;titleEl.style.fontWeight=title.bold?'700':'400';titleEl.style.fontStyle=title.italic?'italic':'normal';titleEl.style.fontFamily=fontFamily(title.font);const bodyEl=document.createElement('div');bodyEl.className='announcement-body';bodyEl.textContent=body.text||'';bodyEl.style.color=validHex(body.color,'#334155');bodyEl.style.fontSize=`${Math.max(1,Number(body.size)||18)}px`;bodyEl.style.fontWeight=body.bold?'700':'400';bodyEl.style.fontStyle=body.italic?'italic':'normal';bodyEl.style.fontFamily=fontFamily(body.font);bodyEl.style.textAlign=['left','center','right'].includes(body.align)?body.align:'center';content.appendChild(titleEl);content.appendChild(bodyEl);box.appendChild(content);if(image.data){const imageEl=document.createElement('img');imageEl.className='announcement-image';imageEl.src=image.data;imageEl.alt='';const size=Math.max(1,Math.min(100,Number(image.size)||70));imageEl.style.width=`${size}%`;imageEl.style.height=`${size}%`;imageEl.style.transform=image.pos==='behind'?`translate(-50%,-50%) rotate(${Number(image.rot)||0}deg)`:`translateY(-50%) rotate(${Number(image.rot)||0}deg)`;imageEl.classList.add(['left','right','behind'].includes(image.pos)?image.pos:'behind');box.appendChild(imageEl);}return box;}
+        async function loadSiteConfig(){try{const response=await fetch('./api/github?v='+Date.now(),{cache:'no-store'});if(!response.ok)return;const config=await response.json();setSiteColors(config);Object.values(announcementSlots).forEach(slot=>slot.innerHTML='');const ann=config.announcement||{};if(ann.visible!==true)return;const location=['portada','servicios','galeria','cobertura','contacto'].includes(ann.after)?ann.after:'portada';const slot=announcementSlots[location];if(slot)slot.appendChild(createAnnouncement(ann));}catch(error){}}
+        loadSiteConfig();
+
+        const contactForm=document.getElementById('contact-form');
+        contactForm.addEventListener('submit',function(event){event.preventDefault();const name=document.getElementById('name').value,email=document.getElementById('email').value,phone=document.getElementById('phone').value,message=document.getElementById('message').value,phoneInput=document.getElementById('phone');if(phoneInput.value&&!phoneInput.checkValidity()){alert("Por favor, ingresa un número de teléfono válido. Solo se permiten números, el signo '+' al inicio y espacios/guiones.");return;}const subject=encodeURIComponent(`Consulta de ${name} (Web Serco)`);const body=encodeURIComponent(`\nHola Serco,\n\nMi nombre es ${name}, y mi consulta es la siguiente:\n\n${message}\n\nMis datos de contacto son:\nCorreo: ${email}\nTeléfono: ${phone||'No proporcionado'}\n\nSaludos.\n`);window.location.href=`mailto:serco.mxli@gmail.com?subject=${subject}&body=${body}`;});
+    </script>
+</body>
+</html>
