@@ -377,6 +377,23 @@
         else { htmlElement.classList.remove('dark'); htmlElement.classList.add('light'); localStorage.setItem('theme','light'); applyThemeColors(false); }
         themeToggle.addEventListener('click', () => { const isCurrentlyLight = htmlElement.classList.contains('light'); if (isCurrentlyLight) { htmlElement.classList.remove('light'); htmlElement.classList.add('dark'); localStorage.setItem('theme','dark'); applyThemeColors(true); } else { htmlElement.classList.remove('dark'); htmlElement.classList.add('light'); localStorage.setItem('theme','light'); applyThemeColors(false); } });
 
+        // Los enlaces que apuntan a Servicios llevan el título directamente bajo la navbar.
+        document.addEventListener('click', function(event) {
+            const link = event.target.closest('a[href="#servicios"]');
+            if (!link) return;
+            const title = document.getElementById('titulo-servicios');
+            if (!title) return;
+            event.preventDefault();
+            const navbar = document.querySelector('header');
+            const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 0;
+            const titleTop = title.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({
+                top: Math.max(0, titleTop - navbarHeight),
+                behavior: 'smooth'
+            });
+            history.replaceState(null, '', '#servicios');
+        });
+
         const menuButton = document.getElementById('menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         menuButton.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
