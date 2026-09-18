@@ -123,13 +123,13 @@
         .logo-img { height:40px; width:auto; }
         .hero-logo-img { width:60vw; max-width:600px; height:auto; margin-bottom:2rem; }
         @media (max-width:900px) and (orientation:landscape) {
-            /* En landscape < 900px, el hero y su contenido se reducen 10%.
+            /* En landscape < 900px, el hero y su contenido se reducen otro 10%.
                El contador permanece sin reducción. */
-            .hero-logo-img { width:36vw; max-width:36vw; }
+            .hero-logo-img { width:44vw; max-width:44vw; }
             #inicio {
-                height:calc((100dvh - var(--navbar-height)) * .9);
+                height:calc((100dvh - var(--navbar-height)) * .81);
                 max-height:none;
-                min-height:387px;
+                min-height:348px;
             }
             #inicio .contador-container {
                 position:absolute;
@@ -149,7 +149,15 @@
                 padding-bottom:0;
             }
             #inicio .absolute.inset-0.z-20 > div {
-                transform:scale(.9);
+                transform:scale(.81);
+                transform-origin:center center;
+            }
+            #inicio .absolute.inset-0.z-20 > div .hero-logo-img {
+                transform:scale(1.222222);
+                transform-origin:center center;
+            }
+            #inicio .absolute.inset-0.z-20 > div a {
+                transform:scale(1.222222);
                 transform-origin:center center;
             }
         }
