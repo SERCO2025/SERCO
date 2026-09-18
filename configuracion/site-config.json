@@ -5,32 +5,32 @@
   "secondaryChoice": "b",
   "siteBg": "#0B1120",
   "announcement": {
-    "visible": false,
+    "visible": true,
     "after": "portada",
     "bgVisible": true,
-    "bg": "#FFFFFF",
+    "bg": "#fbff00",
     "borderVisible": true,
-    "border": "#009BFF",
+    "border": "#ff7b00",
     "radius": 20,
-    "borderWidth": 2,
+    "borderWidth": 7,
     "shadow": true,
     "title": {
-      "text": "Título del comunicado",
+      "text": "continuamos labores",
       "color": "#111827",
       "size": 32,
       "bold": true,
-      "italic": false,
+      "italic": true,
       "align": "center",
-      "font": "Montserrat"
+      "font": "Anton"
     },
     "body": {
-      "text": "Escribe aquí el texto principal del anuncio o comunicado.",
-      "color": "#334155",
-      "size": 18,
+      "text": "Despues de las festividades continuamos con nuestra jornada laboral habitual\n\nGracias",
+      "color": "#ff0000",
+      "size": 26,
       "bold": false,
-      "italic": false,
+      "italic": true,
       "align": "center",
-      "font": "Montserrat"
+      "font": "Fredoka"
     },
     "img": {
       "data": "",
