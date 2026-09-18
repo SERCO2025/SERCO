@@ -1,5 +1,8 @@
 {
   "accent": "#009BFF",
+  "secondary": "#6400FF",
+  "tertiary": "#001CFF",
+  "secondaryChoice": "a",
   "siteBg": "#0B1120",
   "announcement": {
     "visible": false,
@@ -35,8 +38,5 @@
       "size": 70,
       "rot": 0
     }
-  },
-  "secondary": "#34D399",
-  "tertiary": "#1AB4C8",
-  "secondaryChoice": "a"
+  }
 }
