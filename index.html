@@ -124,6 +124,28 @@
         .hero-logo-img { width:60vw; max-width:600px; height:auto; margin-bottom:2rem; }
         @media (max-width:900px) and (orientation:landscape) {
             .hero-logo-img { width:40vw; max-width:40vw; }
+            #inicio {
+                height:calc(100dvh - var(--navbar-height));
+                max-height:none;
+                min-height:430px;
+            }
+            #inicio .contador-container {
+                position:absolute;
+                top:0;
+                left:0;
+                z-index:30;
+            }
+            #inicio .absolute.inset-0.z-0,
+            #inicio .absolute.inset-0.z-10,
+            #inicio .absolute.inset-0.z-20 {
+                top:var(--contador-height) !important;
+                height:calc(100% - var(--contador-height)) !important;
+            }
+            #inicio .absolute.inset-0.z-20 {
+                align-items:center;
+                padding-top:0;
+                padding-bottom:0;
+            }
         }
 
         .btn-accent { background-color:var(--color-accent); box-shadow:0 0 15px color-mix(in srgb,var(--color-accent) 60%,transparent); }
