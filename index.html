@@ -122,6 +122,9 @@
         #gallery-container { height:400px; position:relative; }
         .logo-img { height:40px; width:auto; }
         .hero-logo-img { width:60vw; max-width:600px; height:auto; margin-bottom:2rem; }
+        @media (max-width:767px) and (orientation:landscape) {
+            .hero-logo-img { width:40vw; max-width:40vw; }
+        }
 
         .btn-accent { background-color:var(--color-accent); box-shadow:0 0 15px color-mix(in srgb,var(--color-accent) 60%,transparent); }
         .btn-accent:hover { filter:brightness(1.25); box-shadow:0 0 25px color-mix(in srgb,var(--color-accent) 90%,transparent); }
