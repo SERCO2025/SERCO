@@ -162,6 +162,17 @@
             }
         }
 
+        /* En landscape < 900px, la sección de servicios y todo su contenido se reducen 10%. */
+        @media (max-width:900px) and (orientation:landscape) {
+            #servicios {
+                padding-top:4.5rem !important;
+                padding-bottom:4.5rem !important;
+            }
+            #servicios > div {
+                zoom:.9;
+            }
+        }
+
         /* En pantallas de hasta 900px, la navbar se reduce al 70% de su altura original. */
         @media (max-width:900px) {
             :root { --navbar-height:30px; }
