@@ -72,9 +72,16 @@ function encodeUtf8(value) {
   return Buffer.from(value, 'utf8').toString('base64');
 }
 
+function hslToHex(h,s,l){h=((h%360)+360)%360;s=Math.max(0,Math.min(1,s));l=Math.max(0,Math.min(1,l));const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return '#'+[r,g,b].map(v=>Math.round((v+m)*255).toString(16).padStart(2,'0')).join('').toUpperCase();}
+function rgbToHsl(hex){const r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255,max=Math.max(r,g,b),min=Math.min(r,g,b);let h=0,s=0,l=(max+min)/2;if(max!==min){const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);if(max===r)h=((g-b)/d+(g<b?6:0))/6;else if(max===g)h=((b-r)/d+2)/6;else h=((r-g)/d+4)/6;}return [h*360,s,l];}
+function buildColorRoutes(hex){const [h,s,l]=rgbToHsl(hex);return {a:{secondary:hslToHex(h+60,s,l),tertiary:hslToHex(h+30,s,l)},b:{secondary:hslToHex(h-60,s,l),tertiary:hslToHex(h-30,s,l)}};}
 function normalizeConfig(input) {
   const safe = JSON.parse(JSON.stringify(input || {}));
   if (!/^#[0-9a-fA-F]{6}$/.test(safe.accent || '')) safe.accent = '#009BFF';
+  const routes = buildColorRoutes(safe.accent);
+  safe.secondaryChoice = safe.secondaryChoice === 'b' ? 'b' : 'a';
+  safe.secondary = routes[safe.secondaryChoice].secondary;
+  safe.tertiary = routes[safe.secondaryChoice].tertiary;
   if (!/^#[0-9a-fA-F]{6}$/.test(safe.siteBg || '')) safe.siteBg = '#0B1120';
   safe.announcement = safe.announcement || {};
   safe.announcement.visible = safe.announcement.visible === true;
