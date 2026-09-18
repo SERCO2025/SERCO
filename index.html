@@ -162,6 +162,13 @@
             }
         }
 
+        /* En portrait, hasta 900px de alto, se reduce el espacio entre el título y los botones. */
+        @media (max-height:900px) and (orientation:portrait) {
+            #titulo-servicios {
+                margin-bottom:40px !important;
+            }
+        }
+
         /* En landscape < 900px, la sección de servicios y todo su contenido se reducen 10%. */
         @media (max-width:900px) and (orientation:landscape) {
             #servicios {
@@ -446,7 +453,7 @@
                 tab.classList.remove('border-transparent');
                 tab.classList.add('border-primary');
                 showImagePreview(tab);
-                if (window.innerWidth <= 900 && window.matchMedia('(orientation: portrait)').matches) {
+                if (window.matchMedia('(max-height: 900px) and (orientation: portrait)').matches) {
                     setTimeout(() => {
                         const navbar = document.querySelector('header');
                         const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 0;
