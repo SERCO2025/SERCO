@@ -35,5 +35,8 @@
       "size": 70,
       "rot": 0
     }
-  }
+  },
+  "secondary": "#34D399",
+  "tertiary": "#1AB4C8",
+  "secondaryChoice": "a"
 }
