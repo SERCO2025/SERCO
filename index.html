@@ -391,10 +391,15 @@
         themeToggle.addEventListener('click', () => { const isCurrentlyLight = htmlElement.classList.contains('light'); if (isCurrentlyLight) { htmlElement.classList.remove('light'); htmlElement.classList.add('dark'); localStorage.setItem('theme','dark'); applyThemeColors(true); } else { htmlElement.classList.remove('dark'); htmlElement.classList.add('light'); localStorage.setItem('theme','light'); applyThemeColors(false); } });
 
         // En portrait, los enlaces de las secciones llevan el título con 20px de separación bajo la navbar.
+        // En landscape de hasta 900px de ancho, Servicios queda a 5px de la navbar.
         document.addEventListener('click', function(event) {
-            if (!window.matchMedia('(orientation: portrait)').matches) return;
             const link = event.target.closest('a[href="#servicios"], a[href="#proyectos"], a[href="#cobertura"], a[href="#contacto"]');
             if (!link) return;
+
+            const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+            const isSmallLandscape = window.innerWidth < 900 && window.matchMedia('(orientation: landscape)').matches;
+            if (!isPortrait && !(isSmallLandscape && link.getAttribute('href') === '#servicios')) return;
+
             const targetMap = {
                 '#servicios':'titulo-servicios',
                 '#proyectos':'titulo-proyectos',
@@ -404,12 +409,15 @@
             const targetId = targetMap[link.getAttribute('href')];
             const title = document.getElementById(targetId);
             if (!title) return;
+
             event.preventDefault();
             const navbar = document.querySelector('header');
             const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 0;
             const titleTop = title.getBoundingClientRect().top + window.pageYOffset;
+            const spacing = isSmallLandscape ? 5 : 20;
+
             window.scrollTo({
-                top: Math.max(0, titleTop - navbarHeight - 20),
+                top: Math.max(0, titleTop - navbarHeight - spacing),
                 behavior: 'smooth'
             });
             history.replaceState(null, '', link.getAttribute('href'));
