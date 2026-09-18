@@ -169,14 +169,11 @@
             }
         }
 
-        /* En landscape < 900px, la sección de servicios y todo su contenido se reducen 10%. */
+        /* Ajustes de servicios en landscape < 900px. */
         @media (max-width:900px) and (orientation:landscape) {
             #servicios {
                 padding-top:4.5rem !important;
                 padding-bottom:4.5rem !important;
-            }
-            #servicios > div {
-                zoom:.9;
             }
             #titulo-servicios {
                 margin-bottom:0 !important;
@@ -189,6 +186,18 @@
             }
             #servicios .service-tab:not(:first-child) {
                 font-size:99% !important;
+            }
+            #servicios .service-content {
+                line-height:1.15;
+            }
+            #servicios .service-content h3,
+            #servicios .service-content h4,
+            #servicios .service-content p,
+            #servicios .service-content li {
+                line-height:1.15;
+            }
+            #servicios .service-content ul {
+                gap:0 !important;
             }
         }
 
