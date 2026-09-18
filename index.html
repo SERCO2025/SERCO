@@ -472,7 +472,7 @@
             imageElement.classList.add('service-image-preview');
             imagePreviewContainer.appendChild(imageElement);
             requestAnimationFrame(() => imageElement.classList.add('slide-in'));
-            imagePreviewTimer = setTimeout(() => hideImagePreview(),3000);
+            imagePreviewTimer = setTimeout(() => hideImagePreview(),2500);
         }
         function changeServiceContent(targetId, tab) {
             const targetElement = document.getElementById(targetId);
