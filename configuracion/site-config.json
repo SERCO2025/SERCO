@@ -6,7 +6,7 @@
   "siteBg": "#0B1120",
   "announcement": {
     "visible": true,
-    "after": "portada",
+    "after": "servicios",
     "bgVisible": true,
     "bg": "#fbff00",
     "borderVisible": true,
