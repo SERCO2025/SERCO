@@ -5,7 +5,7 @@
   "secondaryChoice": "b",
   "siteBg": "#0B1120",
   "announcement": {
-    "visible": true,
+    "visible": false,
     "after": "galeria",
     "bgVisible": true,
     "bg": "#4f4f4f",
