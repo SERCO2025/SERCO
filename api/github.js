@@ -174,7 +174,29 @@ module.exports = async (req, res) => {
   if (req.method === 'GET') {
     try {
       const file = await githubGet(CONFIG_PATH);
-      return send(res, 200, JSON.parse(decodeBase64(file.content)));
+      const raw = decodeBase64(file.content).replace(/^\\uFEFF/, '').trim();
+      if (!raw) {
+        return send(res, 200, normalizeConfig({
+          accent: '#009BFF',
+          secondaryChoice: 'a',
+          siteBg: '#0B1120',
+          announcement: {
+            visible: true,
+            after: 'portada',
+            bgVisible: true,
+            bg: '#FFFFFF',
+            borderVisible: true,
+            border: '#009BFF',
+            radius: 20,
+            borderWidth: 2,
+            shadow: true,
+            title: { text: 'Título del comunicado', color: '#111827', size: 32, bold: true, italic: false, align: 'center', font: 'Montserrat' },
+            body: { text: 'Escribe aquí el texto principal del anuncio o comunicado.', color: '#334155', size: 18, bold: false, italic: false, align: 'center', font: 'Montserrat' },
+            img: { data: '', pos: 'behind', size: 70, rot: 0, alpha: 100, y: 50 }
+          }
+        }));
+      }
+      return send(res, 200, JSON.parse(raw));
     } catch (e) {
       return send(res, 500, { error: e.message || 'No se pudo leer la configuración.' });
     }
