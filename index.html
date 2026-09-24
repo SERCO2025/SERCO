@@ -117,9 +117,13 @@
         #inicio { height: calc(100vh - (var(--navbar-height) + var(--contador-height))); max-height: 100vh; }
         .text-shadow { text-shadow: 2px 2px 4px rgba(0,0,0,.7); }
 
-        .gallery-image { width:100%; height:400px; object-fit:cover; position:absolute; top:0; left:0; opacity:0; transition:opacity .8s ease-in-out; }
-        .gallery-image.active { opacity:1; }
-        #gallery-container { height:400px; position:relative; }
+        .gallery-image { width:100%; height:400px; object-fit:cover; position:absolute; top:0; left:0; opacity:1; transform:translateX(100%); transition:transform .8s ease-in-out; }
+        .gallery-image.active { opacity:1; transform:translateX(0); }
+        .gallery-image.slide-out-left { transform:translateX(-100%); }
+        .gallery-image.slide-out-right { transform:translateX(100%); }
+        .gallery-image.slide-in-left { transform:translateX(-100%); }
+        .gallery-image.slide-in-right { transform:translateX(100%); }
+        #gallery-container { height:400px; position:relative; overflow:hidden; }
         .logo-img { height:40px; width:auto; }
         .hero-logo-img { width:60vw; max-width:600px; height:auto; margin-bottom:2rem; }
         @media (max-width:900px) and (orientation:landscape) {
@@ -251,6 +255,10 @@
         .announcement.behind { display:block; }
         .announcement-image.behind { z-index:1; left:50%; top:50%; transform:translate(-50%,-50%); }
         .announcement-image.hidden { display:none; }
+        .mobile-menu-animated { max-height:0; overflow:hidden; opacity:0; transform:translateY(-100%); transition:max-height .35s ease, opacity .35s ease, transform .35s ease; }
+        .mobile-menu-animated.menu-open { max-height:500px; opacity:1; transform:translateY(0); }
+        .mobile-menu-animated.menu-closing { max-height:500px; opacity:0; transform:translateX(100%); }
+
         @media(max-width:640px){
           .announcement.split-left,.announcement.split-right { flex-direction:row; gap:.75rem; padding:1rem; }
           .announcement.split-left .announcement-image,.announcement.split-right .announcement-image { max-width:55%; max-height:100%; }
@@ -275,12 +283,12 @@
                 <button id="menu-button" class="md:hidden text-card-text focus:outline-none p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300"><i class="fas fa-bars text-xl"></i></button>
             </div>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-card border-t border-card">
+        <div id="mobile-menu" class="md:hidden bg-card border-t border-card mobile-menu-animated">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
-                <a href="#servicios" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Servicios</a>
-                <a href="#proyectos" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Proyectos</a>
-                <a href="#cobertura" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Cobertura</a>
-                <a href="#contacto" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Contacto</a>
+                <a href="#servicios" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="closeMobileMenu()">Servicios</a>
+                <a href="#proyectos" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="closeMobileMenu()">Proyectos</a>
+                <a href="#cobertura" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="closeMobileMenu()">Cobertura</a>
+                <a href="#contacto" class="text-card-text hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium" onclick="closeMobileMenu()">Contacto</a>
             </div>
         </div>
     </header>
@@ -451,7 +459,23 @@
 
         const menuButton = document.getElementById('menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        menuButton.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+        let mobileMenuCloseTimer = null;
+        function closeMobileMenu() {
+            if (mobileMenuCloseTimer) clearTimeout(mobileMenuCloseTimer);
+            mobileMenu.classList.remove('menu-open');
+            mobileMenu.classList.add('menu-closing');
+            mobileMenuCloseTimer = setTimeout(() => {
+                mobileMenu.classList.remove('menu-closing');
+            },350);
+        }
+        menuButton.addEventListener('click', () => {
+            if (mobileMenu.classList.contains('menu-open')) closeMobileMenu();
+            else {
+                if (mobileMenuCloseTimer) clearTimeout(mobileMenuCloseTimer);
+                mobileMenu.classList.remove('menu-closing');
+                mobileMenu.classList.add('menu-open');
+            }
+        });
 
         const serviceTabs = document.querySelectorAll('.service-tab');
         const serviceContents = document.querySelectorAll('.service-content');
@@ -533,7 +557,30 @@
                 currentImageIndex=0;prevBtn.style.display='';nextBtn.style.display='';
             } catch(error){prevBtn.style.display='none';nextBtn.style.display='none';clearInterval(autoplayInterval);galleryContainer.innerHTML='<p class="text-center text-xl text-card-text p-4">No fue posible cargar la galería en este momento.</p>';}
         }
-        function showImage(direction){if(validImages.length===0)return;if(direction==='next')currentImageIndex=(currentImageIndex+1)%validImages.length;else if(direction==='prev')currentImageIndex=(currentImageIndex-1+validImages.length)%validImages.length;else return;document.querySelectorAll('.gallery-image').forEach(img=>img.classList.remove('active'));const currentImg=galleryContainer.querySelector('.gallery-image[data-index="'+currentImageIndex+'"]');if(currentImg)currentImg.classList.add('active');if(fullscreenViewer.classList.contains('open'))updateFullscreenImage();}
+        function showImage(direction){
+            if(validImages.length===0)return;
+            const previousIndex=currentImageIndex;
+            if(direction==='next')currentImageIndex=(currentImageIndex+1)%validImages.length;
+            else if(direction==='prev')currentImageIndex=(currentImageIndex-1+validImages.length)%validImages.length;
+            else return;
+            const previousImg=galleryContainer.querySelector('.gallery-image[data-index="'+previousIndex+'"]');
+            const currentImg=galleryContainer.querySelector('.gallery-image[data-index="'+currentImageIndex+'"]');
+            if(!currentImg)return;
+            const forward=direction==='next';
+            const classes=['active','slide-in-left','slide-in-right','slide-out-left','slide-out-right'];
+            if(previousImg)previousImg.classList.remove(...classes);
+            currentImg.classList.remove(...classes);
+            if(previousImg)previousImg.classList.add(forward?'slide-out-left':'slide-out-right');
+            currentImg.classList.add(forward?'slide-in-right':'slide-in-left');
+            requestAnimationFrame(() => {
+                currentImg.classList.remove('slide-in-right','slide-in-left');
+                currentImg.classList.add('active');
+            });
+            setTimeout(() => {
+                if(previousImg)previousImg.classList.remove('active','slide-out-left','slide-out-right');
+            },850);
+            if(fullscreenViewer.classList.contains('open'))updateFullscreenImage();
+        }
         prevBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('prev');startAutoplay();});
         nextBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('next');startAutoplay();});
         function startAutoplay(){clearInterval(autoplayInterval);if(validImages.length>1)autoplayInterval=setInterval(()=>showImage('next'),5000);}
