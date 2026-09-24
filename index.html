@@ -572,10 +572,9 @@
             currentImg.classList.remove(...classes);
             if(previousImg)previousImg.classList.add(forward?'slide-out-left':'slide-out-right');
             currentImg.classList.add(forward?'slide-in-right':'slide-in-left');
-            requestAnimationFrame(() => {
-                currentImg.classList.remove('slide-in-right','slide-in-left');
-                currentImg.classList.add('active');
-            });
+            void currentImg.offsetWidth;
+            currentImg.classList.remove('slide-in-right','slide-in-left');
+            currentImg.classList.add('active');
             setTimeout(() => {
                 if(previousImg)previousImg.classList.remove('active','slide-out-left','slide-out-right');
             },850);
@@ -584,7 +583,7 @@
         prevBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('prev');startAutoplay();});
         nextBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('next');startAutoplay();});
         function startAutoplay(){clearInterval(autoplayInterval);if(validImages.length>1)autoplayInterval=setInterval(()=>showImage('next'),5000);}
-        function updateFullscreenImage(direction){if(validImages.length===0)return;const imagePath=validImages[currentImageIndex];const newSrc='./fotos/'+encodeURIComponent(imagePath);if(!direction||!fullscreenViewer.classList.contains('open')){fullscreenImage.src=newSrc;fullscreenImage.alt='Proyecto Serco - '+imagePath;fullscreenImage.classList.remove('fullscreen-slide-in-right','fullscreen-slide-in-left');fullscreenViewer.querySelectorAll('.fullscreen-slide-clone').forEach(el=>el.remove());return;}const outgoing=fullscreenImage.cloneNode(true);outgoing.removeAttribute('id');outgoing.className='fullscreen-slide-clone';outgoing.src=fullscreenImage.src;outgoing.alt=fullscreenImage.alt;fullscreenViewer.appendChild(outgoing);const incomingClass=direction==='next'?'fullscreen-slide-in-right':'fullscreen-slide-in-left';const outgoingClass=direction==='next'?'fullscreen-slide-out-left':'fullscreen-slide-out-right';fullscreenImage.src=newSrc;fullscreenImage.alt='Proyecto Serco - '+imagePath;fullscreenImage.classList.add(incomingClass);requestAnimationFrame(()=>{outgoing.classList.add(outgoingClass);fullscreenImage.classList.remove(incomingClass);});setTimeout(()=>outgoing.remove(),850);}
+        function updateFullscreenImage(direction){if(validImages.length===0)return;const imagePath=validImages[currentImageIndex];const newSrc='./fotos/'+encodeURIComponent(imagePath);if(!direction||!fullscreenViewer.classList.contains('open')){fullscreenImage.src=newSrc;fullscreenImage.alt='Proyecto Serco - '+imagePath;fullscreenImage.classList.remove('fullscreen-slide-in-right','fullscreen-slide-in-left');fullscreenViewer.querySelectorAll('.fullscreen-slide-clone').forEach(el=>el.remove());return;}const outgoing=fullscreenImage.cloneNode(true);outgoing.removeAttribute('id');outgoing.className='fullscreen-slide-clone';outgoing.src=fullscreenImage.src;outgoing.alt=fullscreenImage.alt;fullscreenViewer.appendChild(outgoing);const incomingClass=direction==='next'?'fullscreen-slide-in-right':'fullscreen-slide-in-left';const outgoingClass=direction==='next'?'fullscreen-slide-out-left':'fullscreen-slide-out-right';fullscreenImage.src=newSrc;fullscreenImage.alt='Proyecto Serco - '+imagePath;fullscreenImage.classList.add(incomingClass);void fullscreenImage.offsetWidth;outgoing.classList.add(outgoingClass);void outgoing.offsetWidth;fullscreenImage.classList.remove(incomingClass);setTimeout(()=>outgoing.remove(),850);}
         function startFullscreenAutoplay(){clearInterval(fullscreenAutoplayInterval);if(validImages.length>1)fullscreenAutoplayInterval=setInterval(()=>showImage('next'),5000);}
         function openFullscreenViewer(){if(validImages.length===0)return;updateFullscreenImage();fullscreenViewer.classList.add('open');fullscreenViewer.setAttribute('aria-hidden','false');document.body.classList.add('projects-fullscreen-open');clearInterval(autoplayInterval);startFullscreenAutoplay();}
         function closeFullscreenViewer(){clearInterval(fullscreenAutoplayInterval);fullscreenViewer.classList.remove('open');fullscreenViewer.setAttribute('aria-hidden','true');document.body.classList.remove('projects-fullscreen-open');startAutoplay();}
