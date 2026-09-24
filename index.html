@@ -544,7 +544,7 @@
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const fullscreenViewer=document.getElementById('projects-fullscreen');
-        const fullscreenImage=document.getElementById('projects-fullscreen-image');
+        let fullscreenImage=document.getElementById('projects-fullscreen-image');
         const fullscreenOpenBtn=document.getElementById('projects-fullscreen-open');
         const fullscreenCloseBtn=document.getElementById('projects-fullscreen-close');
         const fullscreenPrevBtn=document.getElementById('projects-fullscreen-prev');
@@ -693,11 +693,17 @@
             if(incoming.complete && incoming.naturalWidth>0)begin();
             else incoming.addEventListener('load',begin,{once:true});
             setTimeout(()=>{
-                fullscreenImage.src=newSrc;
-                fullscreenImage.alt='Proyecto Serco - '+imagePath;
-                fullscreenImage.style.transform='translateX(0)';
-                fullscreenImage.style.zIndex='1';
-                incoming.remove();
+                if(!incoming.isConnected){
+                    fullscreenTransitioning=false;
+                    setFullscreenControlsDisabled(false);
+                    return;
+                }
+                incoming.id='projects-fullscreen-image';
+                incoming.className='';
+                incoming.style.transform='translateX(0)';
+                incoming.style.zIndex='1';
+                fullscreenImage.remove();
+                fullscreenImage=incoming;
                 fullscreenTransitioning=false;
                 setFullscreenControlsDisabled(false);
             },850);
