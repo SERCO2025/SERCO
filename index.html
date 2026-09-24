@@ -237,7 +237,7 @@
         .service-image-preview.slide-in { opacity:1; transform:translateX(0); }
         .service-image-preview.slide-out { opacity:0; transform:translateX(100%); }
 
-        #projects-fullscreen{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;width:100vw;height:100vh;height:100dvh;background:#000;overflow:hidden;}#projects-fullscreen.open{display:flex;}#projects-fullscreen-image{position:absolute;inset:0;display:block;width:100vw;height:100vh;height:100dvh;max-width:100vw;max-height:100vh;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none;transform:translateX(0);transition:transform .8s ease-in-out;}#projects-fullscreen-image.fullscreen-slide-in-right{transform:translateX(100%);}#projects-fullscreen-image.fullscreen-slide-in-left{transform:translateX(-100%);}.fullscreen-slide-clone{position:absolute!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:100vw!important;max-height:100vh!important;max-height:100dvh!important;object-fit:contain!important;user-select:none!important;-webkit-user-drag:none!important;transform:translateX(0);transition:transform .8s ease-in-out;pointer-events:none;}.fullscreen-slide-clone.fullscreen-slide-out-left{transform:translateX(-100%);}.fullscreen-slide-clone.fullscreen-slide-out-right{transform:translateX(100%);}#projects-fullscreen-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:1001;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:0;border-radius:9999px;background:rgba(0,0,0,.65);color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.35);}#projects-fullscreen-close:hover{background:rgba(0,0,0,.9);}body.projects-fullscreen-open{overflow:hidden;}
+        #projects-fullscreen{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;width:100vw;height:100vh;height:100dvh;background:#000;overflow:hidden;}#projects-fullscreen.open{display:flex;}#projects-fullscreen-image{position:absolute;inset:0;z-index:2;display:block;width:100vw;height:100vh;height:100dvh;max-width:100vw;max-height:100vh;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none;transform:translateX(0);transition:transform .8s ease-in-out;}#projects-fullscreen-image.fullscreen-slide-in-right{transform:translateX(100%);}#projects-fullscreen-image.fullscreen-slide-in-left{transform:translateX(-100%);}.fullscreen-slide-clone{position:absolute!important;inset:0!important;z-index:1!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:100vw!important;max-height:100vh!important;max-height:100dvh!important;object-fit:contain!important;user-select:none!important;-webkit-user-drag:none!important;transform:translateX(0);transition:transform .8s ease-in-out;pointer-events:none;}.fullscreen-slide-clone.fullscreen-slide-out-left{transform:translateX(-100%);}.fullscreen-slide-clone.fullscreen-slide-out-right{transform:translateX(100%);}#projects-fullscreen-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:1001;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:0;border-radius:9999px;background:rgba(0,0,0,.65);color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.35);}#projects-fullscreen-close:hover{background:rgba(0,0,0,.9);}#projects-fullscreen-prev,#projects-fullscreen-next{position:absolute;top:50%;z-index:1001;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;padding:.75rem;border-radius:9999px;border:0;cursor:pointer;}#projects-fullscreen-prev{left:1rem;}#projects-fullscreen-next{right:1rem;}#projects-fullscreen-prev:hover,#projects-fullscreen-next:hover{background:rgba(0,0,0,.75);}body.projects-fullscreen-open{overflow:hidden;}
 
         .announcement-slot { display:block; width:100%; }
         .announcement-slot:empty { display:none; }
@@ -362,7 +362,7 @@
         </div>
     </section>
 
-    <div id="projects-fullscreen" aria-hidden="true" role="dialog" aria-label="Galería de proyectos a pantalla completa"><img id="projects-fullscreen-image" src="" alt="Proyecto Serco"><button id="projects-fullscreen-close" type="button" aria-label="Cerrar pantalla completa" title="Cerrar"><i class="fas fa-xmark"></i></button></div>
+    <div id="projects-fullscreen" aria-hidden="true" role="dialog" aria-label="Galería de proyectos a pantalla completa"><img id="projects-fullscreen-image" src="" alt="Proyecto Serco"><button id="projects-fullscreen-prev" type="button" aria-label="Proyecto anterior" title="Anterior"><i class="fas fa-chevron-left"></i></button><button id="projects-fullscreen-next" type="button" aria-label="Proyecto siguiente" title="Siguiente"><i class="fas fa-chevron-right"></i></button><button id="projects-fullscreen-close" type="button" aria-label="Cerrar pantalla completa" title="Cerrar"><i class="fas fa-xmark"></i></button></div>
 
     <div id="announcement-galeria" class="announcement-slot"></div>
     <section id="cobertura" class="py-20 bg-card transition-colors duration-500">
@@ -545,6 +545,8 @@
         const fullscreenImage=document.getElementById('projects-fullscreen-image');
         const fullscreenOpenBtn=document.getElementById('projects-fullscreen-open');
         const fullscreenCloseBtn=document.getElementById('projects-fullscreen-close');
+        const fullscreenPrevBtn=document.getElementById('projects-fullscreen-prev');
+        const fullscreenNextBtn=document.getElementById('projects-fullscreen-next');
         let currentImageIndex=0, validImages=[], autoplayInterval, fullscreenAutoplayInterval;
         async function loadImages() {
             galleryContainer.innerHTML=''; validImages=[]; currentImageIndex=0; prevBtn.style.display=''; nextBtn.style.display='';
@@ -557,6 +559,7 @@
                 currentImageIndex=0;prevBtn.style.display='';nextBtn.style.display='';
             } catch(error){prevBtn.style.display='none';nextBtn.style.display='none';clearInterval(autoplayInterval);galleryContainer.innerHTML='<p class="text-center text-xl text-card-text p-4">No fue posible cargar la galería en este momento.</p>';}
         }
+        let galleryTransitionToken=0;
         function showImage(direction){
             if(validImages.length===0)return;
             const previousIndex=currentImageIndex;
@@ -568,26 +571,29 @@
             if(!currentImg)return;
             const forward=direction==='next';
             const classes=['active','slide-in-left','slide-in-right','slide-out-left','slide-out-right'];
-            if(previousImg)previousImg.classList.remove(...classes);
-            currentImg.classList.remove(...classes);
-            if(previousImg)previousImg.classList.add(forward?'slide-out-left':'slide-out-right');
+            galleryTransitionToken++;
+            const transitionToken=galleryTransitionToken;
+            galleryContainer.querySelectorAll('.gallery-image').forEach(img=>img.classList.remove(...classes));
+            if(previousImg)previousImg.classList.add('active',forward?'slide-out-left':'slide-out-right');
             currentImg.classList.add(forward?'slide-in-right':'slide-in-left');
             void currentImg.offsetWidth;
-            currentImg.classList.remove('slide-in-right','slide-in-left');
             currentImg.classList.add('active');
+            currentImg.classList.remove('slide-in-right','slide-in-left');
             setTimeout(() => {
-                if(previousImg)previousImg.classList.remove('active','slide-out-left','slide-out-right');
+                if(transitionToken!==galleryTransitionToken)return;
+                galleryContainer.querySelectorAll('.gallery-image').forEach(img=>img.classList.remove('slide-out-left','slide-out-right'));
+                currentImg.classList.add('active');
             },850);
             if(fullscreenViewer.classList.contains('open'))updateFullscreenImage(direction);
         }
         prevBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('prev');startAutoplay();});
         nextBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('next');startAutoplay();});
         function startAutoplay(){clearInterval(autoplayInterval);if(validImages.length>1)autoplayInterval=setInterval(()=>showImage('next'),5000);}
-        function updateFullscreenImage(direction){if(validImages.length===0)return;const imagePath=validImages[currentImageIndex];const newSrc='./fotos/'+encodeURIComponent(imagePath);if(!direction||!fullscreenViewer.classList.contains('open')){fullscreenImage.src=newSrc;fullscreenImage.alt='Proyecto Serco - '+imagePath;fullscreenImage.classList.remove('fullscreen-slide-in-right','fullscreen-slide-in-left');fullscreenViewer.querySelectorAll('.fullscreen-slide-clone').forEach(el=>el.remove());return;}const outgoing=fullscreenImage.cloneNode(true);outgoing.removeAttribute('id');outgoing.className='fullscreen-slide-clone';outgoing.src=fullscreenImage.src;outgoing.alt=fullscreenImage.alt;fullscreenViewer.appendChild(outgoing);const incomingClass=direction==='next'?'fullscreen-slide-in-right':'fullscreen-slide-in-left';const outgoingClass=direction==='next'?'fullscreen-slide-out-left':'fullscreen-slide-out-right';fullscreenImage.src=newSrc;fullscreenImage.alt='Proyecto Serco - '+imagePath;fullscreenImage.classList.add(incomingClass);void fullscreenImage.offsetWidth;outgoing.classList.add(outgoingClass);void outgoing.offsetWidth;fullscreenImage.classList.remove(incomingClass);setTimeout(()=>outgoing.remove(),850);}
+        function updateFullscreenImage(direction){if(validImages.length===0)return;const imagePath=validImages[currentImageIndex];const newSrc='./fotos/'+encodeURIComponent(imagePath);if(!direction||!fullscreenViewer.classList.contains('open')){fullscreenImage.src=newSrc;fullscreenImage.alt='Proyecto Serco - '+imagePath;fullscreenImage.classList.remove('fullscreen-slide-in-right','fullscreen-slide-in-left');fullscreenViewer.querySelectorAll('.fullscreen-slide-clone').forEach(el=>el.remove());return;}fullscreenViewer.querySelectorAll('.fullscreen-slide-clone').forEach(el=>el.remove());const outgoing=fullscreenImage.cloneNode(true);outgoing.removeAttribute('id');outgoing.className='fullscreen-slide-clone';outgoing.src=fullscreenImage.src;outgoing.alt=fullscreenImage.alt;fullscreenViewer.insertBefore(outgoing,fullscreenImage);const incomingClass=direction==='next'?'fullscreen-slide-in-right':'fullscreen-slide-in-left';const outgoingClass=direction==='next'?'fullscreen-slide-out-left':'fullscreen-slide-out-right';fullscreenImage.src=newSrc;fullscreenImage.alt='Proyecto Serco - '+imagePath;fullscreenImage.classList.add(incomingClass);void fullscreenImage.offsetWidth;outgoing.classList.add(outgoingClass);void outgoing.offsetWidth;fullscreenImage.classList.remove(incomingClass);setTimeout(()=>outgoing.remove(),850);}
         function startFullscreenAutoplay(){clearInterval(fullscreenAutoplayInterval);if(validImages.length>1)fullscreenAutoplayInterval=setInterval(()=>showImage('next'),5000);}
         function openFullscreenViewer(){if(validImages.length===0)return;updateFullscreenImage();fullscreenViewer.classList.add('open');fullscreenViewer.setAttribute('aria-hidden','false');document.body.classList.add('projects-fullscreen-open');clearInterval(autoplayInterval);startFullscreenAutoplay();}
         function closeFullscreenViewer(){clearInterval(fullscreenAutoplayInterval);fullscreenViewer.classList.remove('open');fullscreenViewer.setAttribute('aria-hidden','true');document.body.classList.remove('projects-fullscreen-open');startAutoplay();}
-        fullscreenOpenBtn.addEventListener('click',openFullscreenViewer);fullscreenCloseBtn.addEventListener('click',closeFullscreenViewer);document.addEventListener('keydown',event=>{if(event.key==='Escape'&&fullscreenViewer.classList.contains('open'))closeFullscreenViewer();});
+        fullscreenOpenBtn.addEventListener('click',openFullscreenViewer);fullscreenCloseBtn.addEventListener('click',closeFullscreenViewer);fullscreenPrevBtn.addEventListener('click',()=>{clearInterval(fullscreenAutoplayInterval);showImage('prev');startFullscreenAutoplay();});fullscreenNextBtn.addEventListener('click',()=>{clearInterval(fullscreenAutoplayInterval);showImage('next');startFullscreenAutoplay();});document.addEventListener('keydown',event=>{if(!fullscreenViewer.classList.contains('open'))return;if(event.key==='Escape')closeFullscreenViewer();else if(event.key==='ArrowLeft'){clearInterval(fullscreenAutoplayInterval);showImage('prev');startFullscreenAutoplay();}else if(event.key==='ArrowRight'){clearInterval(fullscreenAutoplayInterval);showImage('next');startFullscreenAutoplay();}});
         galleryContainer.addEventListener('mouseover',()=>clearInterval(autoplayInterval)); galleryContainer.addEventListener('mouseleave',()=>startAutoplay());
         loadImages().then(()=>startAutoplay());
 
