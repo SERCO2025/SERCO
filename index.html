@@ -125,6 +125,7 @@
         .gallery-image.slide-in-right { transform:translateX(100%); }
         #gallery-container { height:400px; position:relative; overflow:hidden; }
         .gallery-slide-clone { position:absolute!important; top:0!important; left:0!important; width:100%!important; height:400px!important; object-fit:cover!important; opacity:1!important; z-index:20!important; pointer-events:none!important; }
+        .gallery-transition-layer { position:absolute!important; top:0!important; left:0!important; width:100%!important; height:400px!important; object-fit:cover!important; opacity:1!important; pointer-events:none!important; transition:transform .8s ease-in-out; }
         .logo-img { height:40px; width:auto; }
         .hero-logo-img { width:60vw; max-width:600px; height:auto; margin-bottom:2rem; }
         @media (max-width:900px) and (orientation:landscape) {
@@ -238,7 +239,7 @@
         .service-image-preview.slide-in { opacity:1; transform:translateX(0); }
         .service-image-preview.slide-out { opacity:0; transform:translateX(100%); }
 
-        #projects-fullscreen{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;width:100vw;height:100vh;height:100dvh;background:#000;overflow:hidden;}#projects-fullscreen.open{display:flex;}#projects-fullscreen-image{position:absolute;inset:0;z-index:2;display:block;width:100vw;height:100vh;height:100dvh;max-width:100vw;max-height:100vh;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none;transform:translateX(0);transition:transform .8s ease-in-out;}#projects-fullscreen-image.fullscreen-slide-in-right{transform:translateX(100%);}#projects-fullscreen-image.fullscreen-slide-in-left{transform:translateX(-100%);}.fullscreen-slide-clone{position:absolute!important;inset:0!important;z-index:1!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:100vw!important;max-height:100vh!important;max-height:100dvh!important;object-fit:contain!important;user-select:none!important;-webkit-user-drag:none!important;transform:translateX(0);transition:transform .8s ease-in-out;pointer-events:none;}.fullscreen-slide-clone.fullscreen-slide-out-left{transform:translateX(-100%);}.fullscreen-slide-clone.fullscreen-slide-out-right{transform:translateX(100%);}#projects-fullscreen-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:1001;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:0;border-radius:9999px;background:rgba(0,0,0,.65);color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.35);}#projects-fullscreen-close:hover{background:rgba(0,0,0,.9);}#projects-fullscreen-prev,#projects-fullscreen-next{position:absolute;top:50%;z-index:1001;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;padding:.75rem;border-radius:9999px;border:0;cursor:pointer;}#projects-fullscreen-prev{left:1rem;}#projects-fullscreen-next{right:1rem;}#projects-fullscreen-prev:hover,#projects-fullscreen-next:hover{background:rgba(0,0,0,.75);}body.projects-fullscreen-open{overflow:hidden;}
+        #projects-fullscreen{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;width:100vw;height:100vh;height:100dvh;background:#000;overflow:hidden;}#projects-fullscreen.open{display:flex;}#projects-fullscreen-image{position:absolute;inset:0;z-index:1;display:block;width:100vw;height:100vh;height:100dvh;max-width:100vw;max-height:100vh;max-height:100dvh;object-fit:contain;user-select:none;-webkit-user-drag:none;transform:translateX(0);transition:transform .8s ease-in-out;}.fullscreen-slide-in-layer{position:absolute!important;inset:0!important;z-index:2!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:100vw!important;max-height:100vh!important;max-height:100dvh!important;object-fit:contain!important;user-select:none!important;-webkit-user-drag:none!important;transform:translateX(0);transition:transform .8s ease-in-out;pointer-events:none;}.fullscreen-slide-in-layer.fullscreen-slide-in-right{transform:translateX(100%);}.fullscreen-slide-in-layer.fullscreen-slide-in-left{transform:translateX(-100%);}#projects-fullscreen-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:1001;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:0;border-radius:9999px;background:rgba(0,0,0,.65);color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.35);}#projects-fullscreen-close:hover{background:rgba(0,0,0,.9);}#projects-fullscreen-prev,#projects-fullscreen-next{position:absolute;top:50%;z-index:1001;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;padding:.75rem;border-radius:9999px;border:0;cursor:pointer;}#projects-fullscreen-prev{left:1rem;}#projects-fullscreen-next{right:1rem;}#projects-fullscreen-prev:hover,#projects-fullscreen-next:hover{background:rgba(0,0,0,.75);}body.projects-fullscreen-open{overflow:hidden;}
 
         .announcement-slot { display:block; width:100%; }
         .announcement-slot:empty { display:none; }
@@ -561,71 +562,102 @@
             } catch(error){prevBtn.style.display='none';nextBtn.style.display='none';clearInterval(autoplayInterval);galleryContainer.innerHTML='<p class="text-center text-xl text-card-text p-4">No fue posible cargar la galería en este momento.</p>';}
         }
         let galleryTransitionToken=0;
+        let galleryTransitioning=false;
+        let fullscreenTransitioning=false;
+        function setGalleryControlsDisabled(disabled){
+            prevBtn.disabled=disabled;
+            nextBtn.disabled=disabled;
+            prevBtn.style.pointerEvents=disabled?'none':'';
+            nextBtn.style.pointerEvents=disabled?'none':'';
+            prevBtn.style.opacity=disabled?'0.55':'';
+            nextBtn.style.opacity=disabled?'0.55':'';
+        }
+        function setFullscreenControlsDisabled(disabled){
+            fullscreenPrevBtn.disabled=disabled;
+            fullscreenNextBtn.disabled=disabled;
+            fullscreenPrevBtn.style.pointerEvents=disabled?'none':'';
+            fullscreenNextBtn.style.pointerEvents=disabled?'none':'';
+            fullscreenPrevBtn.style.opacity=disabled?'0.55':'';
+            fullscreenNextBtn.style.opacity=disabled?'0.55':'';
+        }
         function showImage(direction){
             if(validImages.length===0)return;
+            if(fullscreenViewer.classList.contains('open')){
+                if(fullscreenTransitioning)return;
+                if(direction==='next')currentImageIndex=(currentImageIndex+1)%validImages.length;
+                else if(direction==='prev')currentImageIndex=(currentImageIndex-1+validImages.length)%validImages.length;
+                else return;
+                updateFullscreenImage(direction);
+                return;
+            }
+            if(galleryTransitioning)return;
             const previousIndex=currentImageIndex;
             if(direction==='next')currentImageIndex=(currentImageIndex+1)%validImages.length;
             else if(direction==='prev')currentImageIndex=(currentImageIndex-1+validImages.length)%validImages.length;
             else return;
             const previousImg=galleryContainer.querySelector('.gallery-image[data-index="'+previousIndex+'"]');
             const currentImg=galleryContainer.querySelector('.gallery-image[data-index="'+currentImageIndex+'"]');
-            if(!currentImg)return;
+            if(!currentImg){currentImageIndex=previousIndex;return;}
             const forward=direction==='next';
+            galleryTransitioning=true;
+            setGalleryControlsDisabled(true);
             galleryTransitionToken++;
             const transitionToken=galleryTransitionToken;
-            const oldClasses=['active','slide-in-left','slide-in-right','slide-out-left','slide-out-right'];
-            galleryContainer.querySelectorAll('.gallery-image').forEach(img=>img.classList.remove(...oldClasses));
-            galleryContainer.querySelectorAll('.gallery-slide-clone').forEach(img=>img.remove());
-            galleryContainer.querySelectorAll('.gallery-image').forEach(img=>{img.style.display='none';});
-            if(previousImg)previousImg.style.display='block';
-            currentImg.style.display='block';
-            const outgoing=previousImg ? previousImg.cloneNode(true) : currentImg.cloneNode(true);
-            outgoing.className='gallery-slide-clone gallery-slide-out';
-            outgoing.src=previousImg ? previousImg.src : currentImg.src;
-            outgoing.alt=previousImg ? previousImg.alt : currentImg.alt;
-            galleryContainer.appendChild(outgoing);
-            const incoming=currentImg;
-            incoming.className='gallery-image gallery-slide-in';
-            incoming.style.display='block';
-            incoming.style.position='absolute';
-            incoming.style.top='0';
-            incoming.style.left='0';
-            incoming.style.width='100%';
-            incoming.style.height='400px';
-            incoming.style.objectFit='cover';
-            incoming.style.transform=forward?'translateX(100%)':'translateX(-100%)';
-            incoming.style.transition='transform .8s ease-in-out';
-            outgoing.style.transform='translateX(0)';
-            outgoing.style.transition='transform .8s ease-in-out';
-            void incoming.offsetWidth;
-            void outgoing.offsetWidth;
-            requestAnimationFrame(()=>{
-                if(transitionToken!==galleryTransitionToken)return;
-                incoming.style.transform='translateX(0)';
-                outgoing.style.transform=forward?'translateX(-100%)':'translateX(100%)';
+            galleryContainer.querySelectorAll('.gallery-transition-layer,.gallery-slide-clone').forEach(img=>img.remove());
+            galleryContainer.querySelectorAll('.gallery-image').forEach(img=>{
+                img.style.display=img===previousImg?'block':'none';
+                img.style.zIndex='';
+                img.style.transform='';
+                img.style.transition='';
+                img.className='gallery-image'+(img===previousImg?' active':'');
             });
+            const incoming=new Image();
+            incoming.className='gallery-transition-layer';
+            incoming.alt=currentImg.alt;
+            incoming.src=currentImg.src;
+            incoming.style.transform=forward?'translateX(100%)':'translateX(-100%)';
+            incoming.style.zIndex='2';
+            previousImg.style.zIndex='1';
+            galleryContainer.appendChild(incoming);
+            const begin=()=>{
+                if(transitionToken!==galleryTransitionToken)return;
+                void incoming.offsetWidth;
+                void previousImg.offsetWidth;
+                requestAnimationFrame(()=>{
+                    if(transitionToken!==galleryTransitionToken)return;
+                    incoming.style.transform='translateX(0)';
+                    previousImg.style.transform=forward?'translateX(-100%)':'translateX(100%)';
+                });
+            };
+            if(incoming.complete && incoming.naturalWidth>0)begin();
+            else incoming.addEventListener('load',begin,{once:true});
             setTimeout(()=>{
                 if(transitionToken!==galleryTransitionToken)return;
                 galleryContainer.querySelectorAll('.gallery-image').forEach(img=>{
                     img.style.display=img===currentImg?'block':'none';
-                    img.style.position='';
-                    img.style.top='';
-                    img.style.left='';
-                    img.style.width='';
-                    img.style.height='';
-                    img.style.objectFit='';
+                    img.style.zIndex='';
                     img.style.transform='';
                     img.style.transition='';
                     img.className='gallery-image'+(img===currentImg?' active':'');
                 });
-                galleryContainer.querySelectorAll('.gallery-slide-clone').forEach(img=>img.remove());
+                incoming.remove();
+                galleryTransitioning=false;
+                setGalleryControlsDisabled(false);
             },850);
-            if(fullscreenViewer.classList.contains('open'))updateFullscreenImage(direction);
         }
-        prevBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('prev');startAutoplay();});
-        nextBtn.addEventListener('click',()=>{clearInterval(autoplayInterval);showImage('next');startAutoplay();});
+        prevBtn.addEventListener('click',()=>{
+            if(galleryTransitioning)return;
+            clearInterval(autoplayInterval);
+            showImage('prev');
+            startAutoplay();
+        });
+        nextBtn.addEventListener('click',()=>{
+            if(galleryTransitioning)return;
+            clearInterval(autoplayInterval);
+            showImage('next');
+            startAutoplay();
+        });
         function startAutoplay(){clearInterval(autoplayInterval);if(validImages.length>1)autoplayInterval=setInterval(()=>showImage('next'),5000);}
-        let fullscreenTransitionToken=0;
         function updateFullscreenImage(direction){
             if(validImages.length===0)return;
             const imagePath=validImages[currentImageIndex];
@@ -633,48 +665,47 @@
             if(!direction||!fullscreenViewer.classList.contains('open')){
                 fullscreenImage.src=newSrc;
                 fullscreenImage.alt='Proyecto Serco - '+imagePath;
-                fullscreenImage.classList.remove('fullscreen-slide-in-right','fullscreen-slide-in-left');
-                fullscreenViewer.querySelectorAll('.fullscreen-slide-clone').forEach(el=>el.remove());
+                fullscreenImage.classList.remove('fullscreen-slide-out-left','fullscreen-slide-out-right');
+                fullscreenViewer.querySelectorAll('.fullscreen-slide-in-layer').forEach(el=>el.remove());
+                fullscreenImage.style.transform='translateX(0)';
+                fullscreenImage.style.zIndex='1';
                 return;
             }
-            fullscreenTransitionToken++;
-            const transitionToken=fullscreenTransitionToken;
-            fullscreenViewer.querySelectorAll('.fullscreen-slide-clone').forEach(el=>el.remove());
-            const outgoing=fullscreenImage.cloneNode(true);
-            outgoing.removeAttribute('id');
-            outgoing.className='fullscreen-slide-clone';
-            outgoing.src=fullscreenImage.src;
-            outgoing.alt=fullscreenImage.alt;
-            fullscreenViewer.insertBefore(outgoing,fullscreenImage);
-            const incoming=fullscreenImage;
-            const incomingClass=direction==='next'?'fullscreen-slide-in-right':'fullscreen-slide-in-left';
-            const outgoingClass=direction==='next'?'fullscreen-slide-out-left':'fullscreen-slide-out-right';
-            incoming.classList.remove('fullscreen-slide-in-right','fullscreen-slide-in-left');
-            incoming.classList.add(incomingClass);
-            incoming.src=newSrc;
+            if(fullscreenTransitioning)return;
+            fullscreenTransitioning=true;
+            setFullscreenControlsDisabled(true);
+            const forward=direction==='next';
+            const incoming=new Image();
+            incoming.className='fullscreen-slide-in-layer '+(forward?'fullscreen-slide-in-right':'fullscreen-slide-in-left');
             incoming.alt='Proyecto Serco - '+imagePath;
-            const startTransition=()=>{
-                if(transitionToken!==fullscreenTransitionToken)return;
+            incoming.src=newSrc;
+            fullscreenImage.style.zIndex='1';
+            fullscreenImage.classList.remove('fullscreen-slide-out-left','fullscreen-slide-out-right');
+            fullscreenViewer.appendChild(incoming);
+            const begin=()=>{
                 void incoming.offsetWidth;
-                void outgoing.offsetWidth;
+                void fullscreenImage.offsetWidth;
                 requestAnimationFrame(()=>{
-                    if(transitionToken!==fullscreenTransitionToken)return;
-                    incoming.classList.remove(incomingClass);
-                    outgoing.classList.add(outgoingClass);
+                    incoming.style.transform='translateX(0)';
+                    fullscreenImage.style.transform=forward?'translateX(-100%)':'translateX(100%)';
                 });
-                setTimeout(()=>{
-                    if(transitionToken!==fullscreenTransitionToken)return;
-                    outgoing.remove();
-                    incoming.classList.remove('fullscreen-slide-in-right','fullscreen-slide-in-left');
-                },850);
             };
-            if(incoming.complete && incoming.naturalWidth>0)startTransition();
-            else incoming.addEventListener('load',startTransition,{once:true});
+            if(incoming.complete && incoming.naturalWidth>0)begin();
+            else incoming.addEventListener('load',begin,{once:true});
+            setTimeout(()=>{
+                fullscreenImage.src=newSrc;
+                fullscreenImage.alt='Proyecto Serco - '+imagePath;
+                fullscreenImage.style.transform='translateX(0)';
+                fullscreenImage.style.zIndex='1';
+                incoming.remove();
+                fullscreenTransitioning=false;
+                setFullscreenControlsDisabled(false);
+            },850);
         }
         function startFullscreenAutoplay(){clearInterval(fullscreenAutoplayInterval);if(validImages.length>1)fullscreenAutoplayInterval=setInterval(()=>showImage('next'),5000);}
-        function openFullscreenViewer(){if(validImages.length===0)return;updateFullscreenImage();fullscreenViewer.classList.add('open');fullscreenViewer.setAttribute('aria-hidden','false');document.body.classList.add('projects-fullscreen-open');clearInterval(autoplayInterval);startFullscreenAutoplay();}
-        function closeFullscreenViewer(){clearInterval(fullscreenAutoplayInterval);fullscreenViewer.classList.remove('open');fullscreenViewer.setAttribute('aria-hidden','true');document.body.classList.remove('projects-fullscreen-open');startAutoplay();}
-        fullscreenOpenBtn.addEventListener('click',openFullscreenViewer);fullscreenCloseBtn.addEventListener('click',closeFullscreenViewer);fullscreenPrevBtn.addEventListener('click',()=>{clearInterval(fullscreenAutoplayInterval);showImage('prev');startFullscreenAutoplay();});fullscreenNextBtn.addEventListener('click',()=>{clearInterval(fullscreenAutoplayInterval);showImage('next');startFullscreenAutoplay();});document.addEventListener('keydown',event=>{if(!fullscreenViewer.classList.contains('open'))return;if(event.key==='Escape')closeFullscreenViewer();else if(event.key==='ArrowLeft'){clearInterval(fullscreenAutoplayInterval);showImage('prev');startFullscreenAutoplay();}else if(event.key==='ArrowRight'){clearInterval(fullscreenAutoplayInterval);showImage('next');startFullscreenAutoplay();}});
+        function openFullscreenViewer(){if(validImages.length===0)return;fullscreenTransitioning=false;setFullscreenControlsDisabled(false);updateFullscreenImage();fullscreenViewer.classList.add('open');fullscreenViewer.setAttribute('aria-hidden','false');document.body.classList.add('projects-fullscreen-open');clearInterval(autoplayInterval);startFullscreenAutoplay();}
+        function closeFullscreenViewer(){clearInterval(fullscreenAutoplayInterval);fullscreenTransitioning=false;setFullscreenControlsDisabled(false);fullscreenViewer.classList.remove('open');fullscreenViewer.setAttribute('aria-hidden','true');document.body.classList.remove('projects-fullscreen-open');startAutoplay();}
+        fullscreenOpenBtn.addEventListener('click',openFullscreenViewer);fullscreenCloseBtn.addEventListener('click',closeFullscreenViewer);fullscreenPrevBtn.addEventListener('click',()=>{if(fullscreenTransitioning)return;clearInterval(fullscreenAutoplayInterval);showImage('prev');startFullscreenAutoplay();});fullscreenNextBtn.addEventListener('click',()=>{if(fullscreenTransitioning)return;clearInterval(fullscreenAutoplayInterval);showImage('next');startFullscreenAutoplay();});document.addEventListener('keydown',event=>{if(!fullscreenViewer.classList.contains('open'))return;if(event.key==='Escape')closeFullscreenViewer();else if(event.key==='ArrowLeft'){if(fullscreenTransitioning)return;clearInterval(fullscreenAutoplayInterval);showImage('prev');startFullscreenAutoplay();}else if(event.key==='ArrowRight'){if(fullscreenTransitioning)return;clearInterval(fullscreenAutoplayInterval);showImage('next');startFullscreenAutoplay();}});
         galleryContainer.addEventListener('mouseover',()=>clearInterval(autoplayInterval)); galleryContainer.addEventListener('mouseleave',()=>startAutoplay());
         loadImages().then(()=>startAutoplay());
 
