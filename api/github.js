@@ -67,6 +67,15 @@ async function getConfig() {
 
 async function saveConfig(config) {
   const normalized = normalizeConfig(config);
+  const imageData = normalized.announcement && normalized.announcement.img && normalized.announcement.img.data;
+  if (typeof imageData === 'string' && imageData.startsWith('data:image/')) {
+    const parsed = parseDataUrl(imageData);
+    const ext = parsed.mime === 'image/jpeg' ? 'jpg' : parsed.mime.split('/')[1];
+    const filename = 'anuncio-' + Date.now() + '.' + ext;
+    const path = 'comunicados/' + filename;
+    await uploadStorage(path, parsed.bytes, parsed.mime);
+    normalized.announcement.img.data = SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/' + path.split('/').map(encodeURIComponent).join('/');
+  }
   await supabaseRequest('/rest/v1/site_config?on_conflict=id', {
     method: 'POST',
     headers: {
