@@ -665,7 +665,7 @@
         function updateFullscreenImage(direction){
             if(validImages.length===0)return;
             const imagePath=validImages[currentImageIndex];
-            const newSrc='./fotos/'+encodeURIComponent(imagePath);
+            const newSrc=SUPABASE_MEDIA_URL+imagePath.split('/').map(encodeURIComponent).join('/');
             if(!direction||!fullscreenViewer.classList.contains('open')){
                 fullscreenImage.src=newSrc;
                 fullscreenImage.alt='Proyecto Serco - '+imagePath;
