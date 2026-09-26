@@ -1,0 +1,119 @@
+name: Migrar fotos a Supabase
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Verificar credencial
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "Falta el secreto SUPABASE_SERVICE_ROLE_KEY en GitHub."
+            exit 1
+          fi
+
+      - name: Migrar 41 imágenes a Storage y registrar metadatos
+        env:
+          SUPABASE_URL: https://hlwxgetogjvieejcmttf.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+
+          const url = process.env.SUPABASE_URL;
+          const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          const files = [
+            ...Array.from({length: 40}, (_, i) => `${i + 1}.jpg`),
+            "1000128409.jpg"
+          ];
+
+          async function request(path, options = {}) {
+            const headers = {
+              "apikey": key,
+              "Authorization": `Bearer ${key}`,
+              ...(options.headers || {})
+            };
+            const r = await fetch(url + path, {...options, headers});
+            const text = await r.text();
+            let data;
+            try { data = JSON.parse(text); } catch { data = text; }
+            if (!r.ok) {
+              throw new Error(`${r.status} ${r.statusText}: ${text}`);
+            }
+            return data;
+          }
+
+          (async () => {
+            for (let i = 0; i < files.length; i++) {
+              const name = files[i];
+              const local = `fotos/${name}`;
+              const path = `fotos/${name}`;
+              const body = fs.readFileSync(local);
+
+              console.log(`[ ${i + 1}/${files.length} ] ${name} — subiendo...`);
+
+              await request(
+                `/storage/v1/object/serco-media/${encodeURIComponent(path).replace(/%2F/g, "/")}`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "image/jpeg",
+                    "x-upsert": "true"
+                  },
+                  body
+                }
+              );
+
+              const media = await request("/rest/v1/media_files?on_conflict=storage_path", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Prefer": "resolution=merge-duplicates,return=representation"
+                },
+                body: JSON.stringify({
+                  bucket_id: "serco-media",
+                  storage_path: path,
+                  original_name: name,
+                  mime_type: "image/jpeg",
+                  size_bytes: body.length,
+                  media_type: "image",
+                  metadata: {
+                    source: "github",
+                    source_path: local
+                  }
+                })
+              });
+
+              const mediaId = media[0].id;
+              await request("/rest/v1/gallery_items?on_conflict=media_id", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Prefer": "resolution=merge-duplicates,return=minimal"
+                },
+                body: JSON.stringify({
+                  media_id: mediaId,
+                  visible: i < 40,
+                  sort_order: i + 1
+                })
+              });
+
+              console.log(`[ ${i + 1}/${files.length} ] ${name} — OK`);
+            }
+
+            console.log("MIGRACION COMPLETADA: 41/41");
+          })().catch(err => {
+            console.error(err.message);
+            process.exit(1);
+          });
+          NODE
