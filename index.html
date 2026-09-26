@@ -550,14 +550,18 @@
         const fullscreenPrevBtn=document.getElementById('projects-fullscreen-prev');
         const fullscreenNextBtn=document.getElementById('projects-fullscreen-next');
         let currentImageIndex=0, validImages=[], autoplayInterval, fullscreenAutoplayInterval;
+        const SUPABASE_URL='https://hlwxgetogjvieejcmttf.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY='sb_publishable_HO38hS04sOLxoDxtI2sKIA_Mg12PmPn';
+        const SUPABASE_MEDIA_URL=SUPABASE_URL+'/storage/v1/object/public/serco-media/';
         async function loadImages() {
             galleryContainer.innerHTML=''; validImages=[]; currentImageIndex=0; prevBtn.style.display=''; nextBtn.style.display='';
             try {
-                const response=await fetch(`./fotos/imagenes.json?v=${Date.now()}`,{cache:'no-store'}); if(!response.ok) throw new Error(`HTTP ${response.status}`);
-                const manifest=await response.json();
-                validImages=manifest.filter(item=>item&&item.visible===true&&typeof item.archivo==='string'&&item.archivo.trim()).map(item=>({archivo:item.archivo.trim(),orden:Number.isFinite(Number(item.orden))?Number(item.orden):999999})).sort((a,b)=>a.orden-b.orden).map(item=>item.archivo);
+                const response=await fetch(SUPABASE_URL+'/rest/v1/gallery_items?select=visible,sort_order,media_files!inner(storage_path,original_name)&visible=eq.true&order=sort_order.asc',{headers:{'apikey':SUPABASE_PUBLISHABLE_KEY},cache:'no-store'});
+                if(!response.ok) throw new Error(`HTTP ${response.status}`);
+                const rows=await response.json();
+                validImages=rows.filter(item=>item&&item.media_files&&typeof item.media_files.storage_path==='string'&&item.media_files.storage_path.trim()).map(item=>({archivo:item.media_files.original_name||item.media_files.storage_path.split('/').pop(),orden:Number.isFinite(Number(item.sort_order))?Number(item.sort_order):999999,path:item.media_files.storage_path})).sort((a,b)=>a.orden-b.orden).map(item=>item);
                 if(validImages.length===0){prevBtn.style.display='none';nextBtn.style.display='none';clearInterval(autoplayInterval);galleryContainer.innerHTML='<p class="text-center text-xl text-card-text p-4">Aún no hay proyectos cargados en la galería.</p>';return;}
-                validImages.forEach((imagePath,index)=>{const img=document.createElement('img');img.src=`./fotos/${encodeURIComponent(imagePath)}`;img.alt=`Proyecto Serco - ${imagePath}`;img.dataset.index=String(index);img.classList.add('gallery-image');if(index===0)img.classList.add('active');galleryContainer.appendChild(img);});
+                validImages.forEach((item,index)=>{const img=document.createElement('img');img.src=SUPABASE_MEDIA_URL+item.path.split('/').map(encodeURIComponent).join('/');img.alt=`Proyecto Serco - ${item.archivo}`;img.dataset.index=String(index);img.classList.add('gallery-image');if(index===0)img.classList.add('active');galleryContainer.appendChild(img);});
                 currentImageIndex=0;prevBtn.style.display='';nextBtn.style.display='';
             } catch(error){prevBtn.style.display='none';nextBtn.style.display='none';clearInterval(autoplayInterval);galleryContainer.innerHTML='<p class="text-center text-xl text-card-text p-4">No fue posible cargar la galería en este momento.</p>';}
         }
