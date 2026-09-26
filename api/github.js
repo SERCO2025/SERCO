@@ -83,7 +83,8 @@ async function getGallery() {
   return (Array.isArray(rows) ? rows : []).map(x => ({
     archivo: x.media_files && (x.media_files.original_name || String(x.media_files.storage_path || '').split('/').pop()),
     visible: x.visible !== false,
-    orden: Number(x.sort_order) || 999999
+    orden: Number(x.sort_order) || 999999,
+    url: x.media_files ? SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/' + String(x.media_files.storage_path || '').split('/').map(encodeURIComponent).join('/') : ''
   }));
 }
 
@@ -192,7 +193,7 @@ async function uploadImage(name, data) {
     headers:{'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},
     body:JSON.stringify({media_id:media.id,visible:true,sort_order:nextOrder,updated_at:new Date().toISOString()})
   });
-  return {filename,path};
+  return {filename,path,url:SUPABASE_URL+'/storage/v1/object/public/'+BUCKET+'/'+path.split('/').map(encodeURIComponent).join('/')};
 }
 
 async function deleteImage(name) {
