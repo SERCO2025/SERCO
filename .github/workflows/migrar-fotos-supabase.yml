@@ -15,23 +15,23 @@ jobs:
 
       - name: Verificar credencial
         env:
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
         run: |
-          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "Falta el secreto SUPABASE_SERVICE_ROLE_KEY en GitHub."
+          if [ -z "$SUPABASE_SECRET_KEY" ]; then
+            echo "Falta el secreto SUPABASE_SECRET_KEY en GitHub."
             exit 1
           fi
 
       - name: Migrar 41 imágenes a Storage y registrar metadatos
         env:
           SUPABASE_URL: https://hlwxgetogjvieejcmttf.supabase.co
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
         run: |
           node <<'NODE'
           const fs = require('fs');
 
           const url = process.env.SUPABASE_URL;
-          const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          const key = process.env.SUPABASE_SECRET_KEY;
           const files = [
             ...Array.from({length: 40}, (_, i) => `${i + 1}.jpg`),
             "1000128409.jpg"
@@ -40,7 +40,6 @@ jobs:
           async function request(path, options = {}) {
             const headers = {
               "apikey": key,
-              "Authorization": `Bearer ${key}`,
               ...(options.headers || {})
             };
             const r = await fetch(url + path, {...options, headers});
